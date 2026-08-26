@@ -1,0 +1,80 @@
+---
+import { Icon } from 'astro-icon/components';
+import { marca, enlaces, navegacion, whatsapp } from '../data/site';
+import Arte from './Arte.astro';
+
+const anio = new Date().getFullYear();
+
+const redes = [
+  { nombre: 'Instagram', href: enlaces.instagram, icono: 'simple-icons:instagram' },
+  { nombre: 'TikTok', href: enlaces.tiktok, icono: 'simple-icons:tiktok' },
+  { nombre: 'WhatsApp', href: whatsapp(`Hola ${marca.nombre} 🎀`), icono: 'simple-icons:whatsapp' },
+  { nombre: 'Todos los enlaces', href: enlaces.linktree, icono: 'ph:link-simple-bold' },
+];
+---
+
+<footer class="border-t border-tinta/10 bg-crema pt-16 pb-10">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    <div class="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <Arte tipo="mono" tono="#F2789F" tonoSecundario="#FBD3DE" uid="pie" class="h-10 w-10" />
+          <span class="leading-none">
+            <span class="block font-display text-xl">Lissy</span>
+            <span class="block font-mono text-[0.6rem] tracking-[0.34em] text-rosa-hondo">MOÑOS</span>
+          </span>
+        </div>
+        <p class="mt-5 max-w-sm text-[0.96rem] text-tinta-suave">
+          {marca.lemaLargo} Hechos a mano en {marca.ciudad}, {marca.departamento}. Envíos a toda {marca.pais}.
+        </p>
+      </div>
+
+      <nav aria-label="Secciones">
+        <h2 class="eyebrow">Secciones</h2>
+        <ul class="mt-5 space-y-2.5">
+          {
+            navegacion.map((item) => (
+              <li>
+                <a href={item.href} class="text-[0.96rem] text-tinta-suave transition hover:text-rosa-hondo">
+                  {item.texto}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="eyebrow">Encuéntranos</h2>
+        <ul class="mt-5 space-y-2.5">
+          {
+            redes.map((red) => (
+              <li>
+                <a
+                  href={red.href}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center gap-2.5 text-[0.96rem] text-tinta-suave transition hover:text-rosa-hondo"
+                >
+                  <Icon name={red.icono} class="h-4 w-4" aria-hidden="true" />
+                  {red.nombre}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-14 flex flex-col-reverse items-center justify-between gap-4 border-t border-tinta/10 pt-7 sm:flex-row"
+    >
+      <p class="font-mono text-[0.66rem] tracking-[0.14em] text-tinta-suave/70 uppercase">
+        © {anio} {marca.nombreLargo}
+      </p>
+      <p class="font-mono text-[0.66rem] tracking-[0.14em] text-tinta-suave/70 uppercase">
+        {marca.ciudad}, {marca.departamento} · {marca.pais}
+      </p>
+    </div>
+  </div>
+</footer>

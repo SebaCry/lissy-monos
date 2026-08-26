@@ -1,0 +1,52 @@
+---
+import { Icon } from 'astro-icon/components';
+import { marca, enlaces } from '../data/site';
+---
+
+<section id="taller" class="py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    <div class="grid items-center gap-12 lg:grid-cols-[0.85fr_1fr] lg:gap-20">
+      <figure
+        class="relative mx-auto w-full max-w-sm overflow-hidden rounded-petalo shadow-alto ring-1 ring-tinta/5 lg:mx-0"
+        data-reveal="fadeIn"
+      >
+        <img
+          src={marca.foto}
+          alt={`${marca.fundadora}, fundadora de ${marca.nombre}, en su taller de ${marca.ciudad}`}
+          loading="lazy"
+          decoding="async"
+          width="740"
+          height="1111"
+          class="aspect-4/5 w-full object-cover object-top"
+        />
+      </figure>
+
+      <div>
+        <p class="eyebrow" data-reveal="fadeIn">Quién está detrás</p>
+
+        <blockquote data-reveal="fadeInUp">
+          <h2 class="mt-4 text-[clamp(1.9rem,3.6vw,2.8rem)]">Hola, soy {marca.fundadora}</h2>
+          <p class="mt-6 font-display text-xl leading-relaxed text-tinta lg:text-2xl">
+            «{marca.manifiesto}»
+          </p>
+        </blockquote>
+
+        <p class="mt-7 max-w-xl text-[0.98rem] text-tinta-suave" data-reveal="fadeInUp">
+          Cada moño se corta, se cose y se amarra a mano en {marca.ciudad}, {marca.departamento}. No hay
+          producción en serie: si pides tres, los tres pasaron por las mismas manos.
+        </p>
+
+        <a
+          href={enlaces.instagram}
+          target="_blank"
+          rel="noopener"
+          class="mt-8 inline-flex items-center gap-2.5 rounded-full border border-tinta/15 px-6 py-3.5 text-sm font-medium text-tinta transition hover:border-rosa hover:bg-rubor/60"
+          data-reveal="fadeIn"
+        >
+          <Icon name="simple-icons:instagram" class="h-4 w-4" aria-hidden="true" />
+          Ver el taller en {marca.handle}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

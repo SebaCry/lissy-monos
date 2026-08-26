@@ -1,0 +1,241 @@
+---
+import { Icon } from 'astro-icon/components';
+import { categorias, rutaCategoria, type Categoria } from '../data/site';
+
+/* Barra de filtros del catálogo.
+
+   Dos modos:
+   - `filtro`      (en /catalogo) las categorías filtran en el navegador,
+                   sin recargar, y quedan guardadas en la URL (?cat=).
+   - `navegacion`  (en /catalogo/[categoria]) las categorías son enlaces
+                   a su propia página; el buscador y el orden siguen
+                   funcionando dentro de esa categoría.
+
+   Todo es JavaScript de navegador sobre el HTML ya renderizado: si el
+   JS no carga, se ven las 24 referencias igual. */
+
+interface Props {
+  modo?: 'filtro' | 'navegacion';
+  categoriaActiva?: Categoria;
+  total: number;
+}
+
+const { modo = 'filtro', categoriaActiva, total } = Astro.props;
+
+const baseChip =
+  'inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm transition duration-300';
+const chipApagado = 'border-tinta/12 bg-white text-tinta-suave hover:border-rosa hover:text-tinta';
+const chipEncendido = 'border-transparent bg-tinta text-crema shadow-suave';
+---
+
+<div
+  class="sticky top-[4.5rem] z-30 -mx-5 mb-10 border-y border-tinta/8 bg-crema/90 px-5 py-4 backdrop-blur-md lg:-mx-10 lg:px-10"
+  data-catalogo
+  data-modo={modo}
+>
+  <!-- Categorías -->
+  <div class="-mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    {
+      modo === 'filtro' ? (
+        <>
+          <button
+            type="button"
+            class={`${baseChip} ${chipEncendido}`}
+            data-chip="todo"
+            aria-pressed="true"
+          >
+            Todo
+            <span class="font-mono text-[0.62rem] opacity-70">{total}</span>
+          </button>
+          {categorias.map((c) => (
+            <button type="button" class={`${baseChip} ${chipApagado}`} data-chip={c.id} aria-pressed="false">
+              {c.nombre}
+            </button>
+          ))}
+        </>
+      ) : (
+        <>
+          <a href="/catalogo" class={`${baseChip} ${chipApagado}`}>
+            <Icon name="ph:arrow-left" class="h-3.5 w-3.5" aria-hidden="true" />
+            Todo el catálogo
+          </a>
+          {categorias.map((c) => (
+            <a
+              href={rutaCategoria(c.id)}
+              class={`${baseChip} ${c.id === categoriaActiva ? chipEncendido : chipApagado}`}
+              aria-current={c.id === categoriaActiva ? 'page' : undefined}
+            >
+              {c.nombre}
+            </a>
+          ))}
+        </>
+      )
+    }
+  </div>
+
+  <!-- Buscador, orden y disponibilidad -->
+  <div class="mt-3 flex flex-wrap items-center gap-3">
+    <label class="relative flex-1 basis-56">
+      <span class="sr-only">Buscar en el catálogo</span>
+      <Icon
+        name="ph:magnifying-glass"
+        class="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-tinta-suave/60"
+        aria-hidden="true"
+      />
+      <input
+        type="search"
+        placeholder="Buscar referencia, nombre o color…"
+        class="w-full rounded-full border border-tinta/12 bg-white py-2.5 pr-4 pl-10 text-sm text-tinta placeholder:text-tinta-suave/55 focus:border-rosa focus:outline-none"
+        data-buscador
+        autocomplete="off"
+      />
+    </label>
+
+    <label class="flex items-center gap-2 text-sm text-tinta-suave">
+      <span class="sr-only sm:not-sr-only">Ordenar</span>
+      <select
+        class="rounded-full border border-tinta/12 bg-white px-4 py-2.5 text-sm text-tinta focus:border-rosa focus:outline-none"
+        data-orden
+      >
+        <option value="catalogo">Orden del catálogo</option>
+        <option value="precio-asc">Precio: de menor a mayor</option>
+        <option value="precio-desc">Precio: de mayor a menor</option>
+        <option value="nombre">Nombre A–Z</option>
+      </select>
+    </label>
+
+    <label class="flex cursor-pointer items-center gap-2 text-sm text-tinta-suave select-none">
+      <input
+        type="checkbox"
+        class="h-4 w-4 rounded border-tinta/25 accent-rosa-hondo"
+        data-agotados
+      />
+      Solo disponibles
+    </label>
+  </div>
+
+  <!-- Resultado -->
+  <div class="mt-3 flex items-center gap-3 text-sm text-tinta-suave">
+    <span data-contador>{total === 1 ? '1 referencia' : `${total} referencias`}</span>
+    <button
+      type="button"
+      class="hidden text-rosa-hondo underline-offset-4 hover:underline"
+      data-limpiar
+    >
+      Limpiar filtros
+    </button>
+  </div>
+</div>
+
+<script>
+  const raiz = document.querySelector<HTMLElement>('[data-catalogo]');
+  const grid = document.querySelector<HTMLElement>('[data-grid]');
+
+  if (raiz && grid) {
+    const tarjetas = Array.from(grid.querySelectorAll<HTMLElement>('[data-producto]'));
+    const buscador = raiz.querySelector<HTMLInputElement>('[data-buscador]');
+    const orden = raiz.querySelector<HTMLSelectElement>('[data-orden]');
+    const soloDisponibles = raiz.querySelector<HTMLInputElement>('[data-agotados]');
+    const chips = Array.from(raiz.querySelectorAll<HTMLButtonElement>('[data-chip]'));
+    const contador = raiz.querySelector<HTMLElement>('[data-contador]');
+    const limpiar = raiz.querySelector<HTMLButtonElement>('[data-limpiar]');
+    const vacio = document.querySelector<HTMLElement>('[data-vacio]');
+
+    const filtraCategorias = raiz.dataset.modo === 'filtro';
+    const ENCENDIDO = ['border-transparent', 'bg-tinta', 'text-crema', 'shadow-suave'];
+    const APAGADO = ['border-tinta/12', 'bg-white', 'text-tinta-suave', 'hover:border-rosa', 'hover:text-tinta'];
+
+    let categoria = 'todo';
+
+    const sinTildes = (s: string) =>
+      s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+    const pintarChips = () => {
+      chips.forEach((chip) => {
+        const activo = chip.dataset.chip === categoria;
+        chip.classList.remove(...ENCENDIDO, ...APAGADO);
+        chip.classList.add(...(activo ? ENCENDIDO : APAGADO));
+        chip.setAttribute('aria-pressed', String(activo));
+      });
+    };
+
+    const guardarEnUrl = () => {
+      const url = new URL(window.location.href);
+      const q = buscador?.value.trim() ?? '';
+      categoria === 'todo' ? url.searchParams.delete('cat') : url.searchParams.set('cat', categoria);
+      q ? url.searchParams.set('q', q) : url.searchParams.delete('q');
+      history.replaceState(null, '', url.pathname + url.search + url.hash);
+    };
+
+    const aplicar = () => {
+      const q = sinTildes(buscador?.value.trim() ?? '');
+      const ocultarAgotados = soloDisponibles?.checked ?? false;
+      let visibles = 0;
+
+      tarjetas.forEach((t) => {
+        const okCategoria = !filtraCategorias || categoria === 'todo' || t.dataset.categoria === categoria;
+        const okBusqueda = !q || (t.dataset.buscar ?? '').includes(q);
+        const okStock = !ocultarAgotados || t.dataset.agotado === '0';
+        const visible = okCategoria && okBusqueda && okStock;
+
+        // display en línea: gana siempre sobre las utilidades de Tailwind
+        t.style.display = visible ? '' : 'none';
+        if (visible) visibles++;
+      });
+
+      const modo = orden?.value ?? 'catalogo';
+      if (modo !== 'catalogo') {
+        const ordenadas = [...tarjetas].sort((a, b) => {
+          const pa = Number(a.dataset.precio ?? 0);
+          const pb = Number(b.dataset.precio ?? 0);
+          if (modo === 'precio-asc') return pa - pb;
+          if (modo === 'precio-desc') return pb - pa;
+          return (a.dataset.buscar ?? '').localeCompare(b.dataset.buscar ?? '', 'es');
+        });
+        ordenadas.forEach((t) => grid.appendChild(t));
+      } else {
+        tarjetas.forEach((t) => grid.appendChild(t));
+      }
+
+      if (contador) contador.textContent = visibles === 1 ? '1 referencia' : `${visibles} referencias`;
+      if (vacio) vacio.hidden = visibles > 0;
+
+      const hayFiltros =
+        categoria !== 'todo' || Boolean(buscador?.value.trim()) || ocultarAgotados || modo !== 'catalogo';
+      limpiar?.classList.toggle('hidden', !hayFiltros);
+
+      guardarEnUrl();
+    };
+
+    chips.forEach((chip) =>
+      chip.addEventListener('click', () => {
+        categoria = chip.dataset.chip ?? 'todo';
+        pintarChips();
+        aplicar();
+      }),
+    );
+
+    buscador?.addEventListener('input', aplicar);
+    orden?.addEventListener('change', aplicar);
+    soloDisponibles?.addEventListener('change', aplicar);
+
+    limpiar?.addEventListener('click', () => {
+      categoria = 'todo';
+      if (buscador) buscador.value = '';
+      if (orden) orden.value = 'catalogo';
+      if (soloDisponibles) soloDisponibles.checked = false;
+      pintarChips();
+      aplicar();
+    });
+
+    /* Estado inicial desde la URL: /catalogo?cat=mono&q=terciopelo */
+    const params = new URLSearchParams(window.location.search);
+    const catUrl = params.get('cat');
+    if (filtraCategorias && catUrl && chips.some((c) => c.dataset.chip === catUrl)) categoria = catUrl;
+    const qUrl = params.get('q');
+    if (qUrl && buscador) buscador.value = qUrl;
+
+    pintarChips();
+    aplicar();
+  }
+</script>

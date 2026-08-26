@@ -1,0 +1,20 @@
+---
+import { Icon } from 'astro-icon/components';
+import { beneficios } from '../data/site';
+---
+
+<section class="mx-auto max-w-7xl px-5 py-20 lg:px-10 lg:py-28">
+  <ul class="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+    {
+      beneficios.map((b, i) => (
+        <li data-reveal="fadeInUp" style={`--retraso:${i * 90}ms`}>
+          <span class="grid h-12 w-12 place-items-center rounded-full bg-rubor text-rosa-hondo">
+            <Icon name={b.icono} class="h-6 w-6" aria-hidden="true" />
+          </span>
+          <h3 class="mt-5 font-display text-xl">{b.titulo}</h3>
+          <p class="mt-2.5 text-[0.98rem] text-tinta-suave">{b.texto}</p>
+        </li>
+      ))
+    }
+  </ul>
+</section>

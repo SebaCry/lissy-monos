@@ -1,0 +1,63 @@
+---
+import { Icon } from 'astro-icon/components';
+import { marca, enlaces, whatsapp } from '../data/site';
+import Arte from './Arte.astro';
+
+const cta = whatsapp(`Hola ${marca.nombre} 🎀 Quiero armar mi pedido. ¿Me ayudas a elegir?`);
+---
+
+<section class="relative overflow-hidden py-24 lg:py-32">
+  <div
+    class="pointer-events-none absolute inset-0 -z-10"
+    style="background: radial-gradient(70% 60% at 50% 40%, #FDE7EE 0%, #FFFBF7 68%)"
+    aria-hidden="true"
+  >
+  </div>
+
+  <!-- Patrón de lazos de la portada del catálogo, muy tenue -->
+  <div
+    class="pointer-events-none absolute inset-0 -z-10 opacity-[0.22]"
+    style="background-image:url('/images/marca/patron-lazos.webp');background-size:420px;background-repeat:repeat"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative mx-auto max-w-3xl px-5 text-center lg:px-10">
+    <Arte
+      tipo="mono"
+      tono="#F2789F"
+      tonoSecundario="#FBD3DE"
+      uid="cierre"
+      class="moño-vaiven mx-auto w-28 drop-shadow-[0_18px_24px_rgba(74,42,56,0.2)]"
+    />
+
+    <h2 class="mt-8 text-[clamp(2.2rem,5.4vw,3.6rem)]" data-reveal="fadeInUp">
+      ¿Empezamos tu mood bonito?
+    </h2>
+    <p class="mx-auto mt-5 max-w-xl text-lg text-tinta-suave" data-reveal="fadeInUp">
+      Cuéntanos qué buscas y te ayudamos a elegir modelo, tamaño y tono. Se hace a mano, así que también
+      podemos hacerlo a tu medida.
+    </p>
+
+    <div class="mt-10 flex flex-wrap justify-center gap-3" data-reveal="fadeIn">
+      <a
+        href={cta}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2.5 rounded-full bg-rosa-hondo px-8 py-4 font-medium text-white shadow-alto transition hover:-translate-y-0.5 hover:bg-tinta"
+      >
+        <Icon name="simple-icons:whatsapp" class="h-5 w-5" aria-hidden="true" />
+        Escribir por WhatsApp
+      </a>
+      <a
+        href={enlaces.instagram}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2.5 rounded-full border border-tinta/15 px-8 py-4 font-medium text-tinta transition hover:border-rosa hover:bg-white/70"
+      >
+        <Icon name="simple-icons:instagram" class="h-5 w-5" aria-hidden="true" />
+        {marca.handle}
+      </a>
+    </div>
+  </div>
+</section>

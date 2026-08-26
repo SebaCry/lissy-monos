@@ -1,0 +1,65 @@
+---
+import { guiaTamanos } from '../data/site';
+import Titulo from './Titulo.astro';
+---
+
+<section id="tamanos" class="py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    <Titulo eyebrow="Guía de tamaños" titulo={guiaTamanos.titulo} lead={guiaTamanos.lead} />
+
+    <ul class="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        guiaTamanos.medidas.map((m, i) => (
+          <li
+            class="overflow-hidden rounded-petalo bg-white shadow-suave ring-1 ring-tinta/5"
+            data-reveal="fadeInUp"
+            style={`--retraso:${i * 90}ms`}
+          >
+            <div class="grid grid-cols-2 gap-px bg-tinta/8">
+              <img
+                src={m.cola}
+                alt={m.altCola}
+                loading="lazy"
+                decoding="async"
+                width="600"
+                height="800"
+                class="aspect-3/4 w-full bg-white object-cover"
+              />
+              <img
+                src={m.muneca}
+                alt={m.altMuneca}
+                loading="lazy"
+                decoding="async"
+                width="600"
+                height="800"
+                class="aspect-3/4 w-full bg-white object-cover"
+              />
+            </div>
+            <div class="p-6">
+              <h3 class="font-display text-2xl">{m.nombre}</h3>
+              <p class="mt-2 text-[0.96rem] text-tinta-suave">{m.texto}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-8 grid gap-6 sm:grid-cols-2" data-reveal="fadeIn">
+      {
+        guiaTamanos.comparativa.map((c) => (
+          <figure class="overflow-hidden rounded-petalo shadow-suave ring-1 ring-tinta/5">
+            <img
+              src={c.foto}
+              alt={c.alt}
+              loading="lazy"
+              decoding="async"
+              width="900"
+              height="600"
+              class="aspect-3/2 w-full object-cover"
+            />
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="fondo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFBF7"/>
+      <stop offset="60%" stop-color="#FDE7EE"/>
+      <stop offset="100%" stop-color="#FBD3DE"/>
+    </linearGradient>
+    <linearGradient id="cinta" x1="16%" y1="2%" x2="88%" y2="98%">
+      <stop offset="0%" stop-color="#FBD3DE"/>
+      <stop offset="55%" stop-color="#F2789F"/>
+      <stop offset="100%" stop-color="#D9527C"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#fondo)"/>
+  <circle cx="1010" cy="300" r="270" fill="#F2789F" opacity="0.12"/>
+
+  <!-- Moño -->
+  <g transform="translate(860,250) scale(2.05) translate(-100,-100)">
+    <path d="M95 96C86 124 72 146 50 164c12 6 28 4 38-6 11-20 16-42 18-58Z" fill="url(#cinta)"/>
+    <path d="M105 96c9 28 23 50 45 68-12 6-28 4-38-6-11-20-16-42-18-58Z" fill="url(#cinta)"/>
+    <path d="M100 92C72 48 24 44 16 78c-7 32 44 38 84 18Z" fill="url(#cinta)"/>
+    <path d="M100 92c28-44 76-48 84-14 7 32-44 38-84 18Z" fill="url(#cinta)"/>
+    <path d="M100 92C74 62 44 58 30 72c18-6 46 4 70 24Z" fill="#2C1A22" opacity=".14"/>
+    <path d="M100 92c26-30 56-34 70-20-18-6-46 4-70 24Z" fill="#2C1A22" opacity=".14"/>
+    <ellipse cx="100" cy="94" rx="17" ry="15" fill="#F2789F"/>
+    <ellipse cx="100" cy="94" rx="17" ry="15" fill="#2C1A22" opacity=".17"/>
+    <ellipse cx="95" cy="89" rx="6" ry="4.5" fill="#fff" opacity=".45"/>
+  </g>
+
+  <!-- Texto -->
+  <text x="90" y="184" font-family="Georgia, 'Times New Roman', serif" font-size="30" fill="#D9527C" letter-spacing="7">LISSY MOÑOS</text>
+  <text x="90" y="300" font-family="Georgia, 'Times New Roman', serif" font-size="82" fill="#4A2A38">Aquí empieza</text>
+  <text x="90" y="386" font-family="Georgia, 'Times New Roman', serif" font-size="82" fill="#4A2A38">tu mood bonito</text>
+  <path d="M92 406C170 392 232 412 306 400C380 388 452 408 528 396" stroke="#F2789F" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <text x="90" y="472" font-family="Georgia, 'Times New Roman', serif" font-size="27" fill="#7D5B6A">Moños, scrunchies y cosmetiqueras hechos a mano.</text>
+
+  <!-- Muestrario -->
+  <g>
+    <rect x="90" y="512" width="46" height="46" rx="12" fill="#F2789F"/>
+    <rect x="150" y="512" width="46" height="46" rx="12" fill="#CDBDEA"/>
+    <rect x="210" y="512" width="46" height="46" rx="12" fill="#BBD9EF"/>
+    <rect x="270" y="512" width="46" height="46" rx="12" fill="#B9E0D0"/>
+    <rect x="330" y="512" width="46" height="46" rx="12" fill="#F7E2AE"/>
+    <rect x="390" y="512" width="46" height="46" rx="12" fill="#7E3048"/>
+  </g>
+  <text x="464" y="543" font-family="Georgia, 'Times New Roman', serif" font-size="24" fill="#7D5B6A">Ibagué, Tolima · Envíos a toda Colombia</text>
+</svg>

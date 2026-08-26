@@ -1,0 +1,39 @@
+---
+import { Icon } from 'astro-icon/components';
+import { marca, whatsapp } from '../data/site';
+
+const href = whatsapp(`Hola ${marca.nombre} 🎀 Vengo de la página web.`);
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener"
+  class="group fixed right-5 bottom-5 z-40 flex items-center gap-3 rounded-full bg-[#25D366] py-3.5 pr-5 pl-4 text-white shadow-alto transition duration-300 ease-[var(--ease-cinta)] hover:-translate-y-1 focus-visible:-translate-y-1 lg:right-8 lg:bottom-8"
+  data-flotante
+>
+  <Icon name="simple-icons:whatsapp" class="h-6 w-6 shrink-0" aria-hidden="true" />
+  <span class="max-w-0 overflow-hidden text-sm font-medium whitespace-nowrap opacity-0 transition-all duration-300 group-hover:max-w-40 group-hover:opacity-100 group-focus-visible:max-w-40 group-focus-visible:opacity-100">
+    Escríbeme
+  </span>
+  <span class="sr-only">Escribir a Lissy Moños por WhatsApp</span>
+</a>
+
+<script>
+  // Aparece cuando el hero ya pasó, para no competir con el botón principal.
+  const flotante = document.querySelector<HTMLElement>('[data-flotante]');
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+
+  if (flotante && hero) {
+    flotante.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+    new IntersectionObserver(
+      ([entrada]) => {
+        const visible = !entrada.isIntersecting;
+        flotante.classList.toggle('translate-y-24', !visible);
+        flotante.classList.toggle('opacity-0', !visible);
+        flotante.classList.toggle('pointer-events-none', !visible);
+      },
+      { rootMargin: '-40% 0px 0px 0px' },
+    ).observe(hero);
+  }
+</script>

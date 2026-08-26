@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <path d="M95 96C86 124 72 146 50 164c12 6 28 4 38-6 11-20 16-42 18-58Z" fill="currentColor"/>
+  <path d="M105 96c9 28 23 50 45 68-12 6-28 4-38-6-11-20-16-42-18-58Z" fill="currentColor"/>
+  <path d="M100 92C72 48 24 44 16 78c-7 32 44 38 84 18Z" fill="currentColor"/>
+  <path d="M100 92c28-44 76-48 84-14 7 32-44 38-84 18Z" fill="currentColor"/>
+  <ellipse cx="100" cy="94" rx="17" ry="15" fill="currentColor"/>
+</svg>

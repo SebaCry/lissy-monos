@@ -1,0 +1,210 @@
+---
+import { Icon } from 'astro-icon/components';
+import { navegacion, categorias, productosDe, whatsapp, marca, coleccion } from '../data/site';
+import Arte from './Arte.astro';
+
+const cta = whatsapp(`Hola ${marca.nombre} 🎀 Vengo de la página web y quiero hacer un pedido.`);
+---
+
+<header
+  id="encabezado"
+  class="fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-500"
+  data-encabezado
+>
+  <div class="mx-auto flex max-w-7xl items-center gap-6 px-5 py-4 lg:px-10">
+    <a href="/" class="group flex shrink-0 items-center gap-2.5" aria-label={`${marca.nombre}, ir al inicio`}>
+      <Arte
+        tipo="mono"
+        tono="#F2789F"
+        tonoSecundario="#FBD3DE"
+        uid="logo"
+        class="h-9 w-9 transition-transform duration-500 ease-[var(--ease-cinta)] group-hover:-rotate-12"
+      />
+      <span class="leading-none">
+        <span class="block font-display text-xl text-tinta">Lissy</span>
+        <span class="block font-mono text-[0.6rem] tracking-[0.34em] text-rosa-hondo">MOÑOS</span>
+      </span>
+    </a>
+
+    <nav aria-label="Principal" class="ml-auto hidden items-center gap-7 lg:flex">
+      {
+        navegacion.map((item) =>
+          item.href === '/catalogo' ? (
+            /* Catálogo abre el submenú de categorías (CSS puro: hover + focus) */
+            <div class="group relative">
+              <a
+                href="/catalogo"
+                class="relative flex items-center gap-1.5 py-1 text-[0.95rem] text-tinta-suave transition-colors group-hover:text-tinta group-focus-within:text-tinta"
+              >
+                {item.texto}
+                <Icon
+                  name="ph:caret-down"
+                  class="h-3 w-3 transition-transform duration-300 group-hover:rotate-180"
+                  aria-hidden="true"
+                />
+              </a>
+
+              <div class="invisible absolute top-full left-1/2 w-72 -translate-x-1/2 pt-4 opacity-0 transition duration-300 ease-[var(--ease-cinta)] group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                <ul class="overflow-hidden rounded-petalo border border-tinta/8 bg-crema p-2 shadow-alto">
+                  {categorias.map((c) => (
+                    <li>
+                      <a
+                        href={`/catalogo/${c.slug}`}
+                        class="flex items-baseline justify-between gap-3 rounded-2xl px-4 py-2.5 text-[0.95rem] text-tinta-suave transition hover:bg-rubor hover:text-tinta"
+                      >
+                        {c.nombre}
+                        <span class="font-mono text-[0.58rem] tracking-[0.14em] text-tinta-suave/60 uppercase">
+                          {productosDe(c.id).length}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                  <li class="mt-1 border-t border-tinta/8 pt-1">
+                    <a
+                      href="/catalogo"
+                      class="flex items-center justify-between gap-3 rounded-2xl px-4 py-2.5 text-[0.95rem] font-medium text-tinta transition hover:bg-rubor"
+                    >
+                      Ver las {coleccion.length} referencias
+                      <Icon name="ph:arrow-right" class="h-4 w-4" aria-hidden="true" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          ) : (
+            <a
+              href={item.href}
+              class="relative py-1 text-[0.95rem] text-tinta-suave transition-colors hover:text-tinta after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-rosa after:transition-transform after:duration-300 hover:after:scale-x-100"
+            >
+              {item.texto}
+            </a>
+          ),
+        )
+      }
+    </nav>
+
+    <a
+      href={cta}
+      target="_blank"
+      rel="noopener"
+      class="ml-auto inline-flex items-center gap-2 rounded-full bg-tinta px-5 py-2.5 text-sm font-medium text-crema shadow-suave transition hover:bg-rosa-hondo lg:ml-0"
+    >
+      <Icon name="simple-icons:whatsapp" class="h-4 w-4" aria-hidden="true" />
+      <span class="hidden sm:inline">Escríbeme</span>
+      <span class="sm:hidden">Pedir</span>
+    </a>
+
+    <button
+      type="button"
+      class="grid h-11 w-11 shrink-0 place-items-center rounded-full text-tinta transition hover:bg-rubor lg:hidden"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+      aria-controls="menu-movil"
+      data-menu-abrir
+    >
+      <Icon name="ph:list-bold" class="h-6 w-6" />
+    </button>
+  </div>
+
+  <!-- Menú móvil -->
+  <div
+    id="menu-movil"
+    class="invisible fixed inset-0 z-50 overflow-y-auto bg-crema opacity-0 transition-opacity duration-300 lg:hidden"
+    data-menu-panel
+  >
+    <div class="flex items-center justify-between px-5 py-4">
+      <span class="font-mono text-[0.6rem] tracking-[0.34em] text-rosa-hondo">MENÚ</span>
+      <button
+        type="button"
+        class="grid h-11 w-11 place-items-center rounded-full text-tinta transition hover:bg-rubor"
+        aria-label="Cerrar menú"
+        data-menu-cerrar
+      >
+        <Icon name="ph:x-bold" class="h-6 w-6" />
+      </button>
+    </div>
+
+    <nav aria-label="Principal móvil" class="flex flex-col px-5 pt-4 pb-16">
+      <a
+        href="/catalogo"
+        class="flex items-baseline justify-between border-b border-rubor py-4 font-display text-3xl text-tinta"
+        data-menu-enlace
+      >
+        Catálogo
+        <span class="font-mono text-[0.6rem] tracking-[0.14em] text-tinta-suave/60 uppercase">
+          {coleccion.length} refs.
+        </span>
+      </a>
+
+      <ul class="border-b border-rubor py-3">
+        {
+          categorias.map((c) => (
+            <li>
+              <a
+                href={`/catalogo/${c.slug}`}
+                class="flex items-baseline justify-between py-2 pl-4 text-[1.05rem] text-tinta-suave"
+                data-menu-enlace
+              >
+                {c.nombre}
+                <span class="font-mono text-[0.58rem] tracking-[0.14em] text-tinta-suave/50 uppercase">
+                  {productosDe(c.id).length}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        navegacion
+          .filter((item) => item.href !== '/catalogo')
+          .map((item, i) => (
+            <a
+              href={item.href}
+              class="border-b border-rubor py-4 font-display text-3xl text-tinta"
+              style={`transition-delay:${i * 45}ms`}
+              data-menu-enlace
+            >
+              {item.texto}
+            </a>
+          ))
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  const encabezado = document.querySelector<HTMLElement>('[data-encabezado]');
+  const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+  const abrir = document.querySelector<HTMLButtonElement>('[data-menu-abrir]');
+  const cerrar = document.querySelector<HTMLButtonElement>('[data-menu-cerrar]');
+
+  const clasesFijas = ['bg-crema/85', 'backdrop-blur-md', 'shadow-[0_1px_0_rgba(242,120,159,0.22)]'];
+
+  const alHacerScroll = () => {
+    if (!encabezado) return;
+    encabezado.classList.toggle(clasesFijas[0], window.scrollY > 24);
+    encabezado.classList.toggle(clasesFijas[1], window.scrollY > 24);
+    encabezado.classList.toggle(clasesFijas[2], window.scrollY > 24);
+  };
+
+  alHacerScroll();
+  window.addEventListener('scroll', alHacerScroll, { passive: true });
+
+  const alternar = (visible: boolean) => {
+    if (!panel || !abrir) return;
+    panel.classList.toggle('invisible', !visible);
+    panel.classList.toggle('opacity-0', !visible);
+    abrir.setAttribute('aria-expanded', String(visible));
+    document.body.style.overflow = visible ? 'hidden' : '';
+    if (visible) cerrar?.focus();
+    else abrir.focus();
+  };
+
+  abrir?.addEventListener('click', () => alternar(true));
+  cerrar?.addEventListener('click', () => alternar(false));
+  panel?.querySelectorAll('[data-menu-enlace]').forEach((a) => a.addEventListener('click', () => alternar(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel && !panel.classList.contains('invisible')) alternar(false);
+  });
+</script>

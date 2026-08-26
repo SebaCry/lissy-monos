@@ -1,0 +1,115 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Encabezado from '../../components/Encabezado.astro';
+import PieDePagina from '../../components/PieDePagina.astro';
+import BotonWhatsapp from '../../components/BotonWhatsapp.astro';
+import MigasDePan from '../../components/MigasDePan.astro';
+import FiltroCatalogo from '../../components/FiltroCatalogo.astro';
+import TarjetaProducto from '../../components/TarjetaProducto.astro';
+import Tamanos from '../../components/Tamanos.astro';
+import { Icon } from 'astro-icon/components';
+
+import { coleccion, categorias, marca, precioEnNumero, rutaProducto } from '../../data/site';
+
+const sitio = Astro.site?.toString().replace(/\/$/, '') ?? 'https://lissymonos.com';
+
+const title = `Catálogo · ${coleccion.length} referencias — ${marca.nombre}`;
+const description = `Todas las referencias de ${marca.nombre} con precio: scrunchies, moños, lazos, flores, balacas, pinzas y cosmetiqueras. Hechas a mano en ${marca.ciudad}. Filtra por categoría y pide por WhatsApp.`;
+
+const migas = [
+  { texto: 'Inicio', href: '/' },
+  { texto: 'Catálogo' },
+];
+
+const schemaMigas = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${sitio}/` },
+    { '@type': 'ListItem', position: 2, name: 'Catálogo', item: `${sitio}/catalogo` },
+  ],
+};
+
+const schemaLista = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `Catálogo ${marca.nombre}`,
+  numberOfItems: coleccion.length,
+  itemListElement: coleccion.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: `${p.ref} — ${p.nombre}`,
+    url: `${sitio}${rutaProducto(p)}`,
+    ...(p.foto ? { image: `${sitio}${p.foto}` } : {}),
+  })),
+};
+
+const conPrecio = coleccion.map((p) => precioEnNumero(p.precio)).filter((n): n is number => n !== null);
+const desde = Math.min(...conPrecio);
+---
+
+<Layout title={title} description={description} schema={[schemaMigas, schemaLista]}>
+  <Encabezado />
+
+  <main id="contenido" class="pt-28 lg:pt-32">
+    <div class="mx-auto max-w-7xl px-5 lg:px-10">
+      <MigasDePan items={migas} class="mb-6" />
+
+      <div class="max-w-3xl">
+        <p class="eyebrow">El catálogo completo</p>
+        <h1 class="mt-4 text-[clamp(2.2rem,5vw,3.6rem)]">
+          {coleccion.length} referencias, todas hechas a mano
+        </h1>
+        <p class="mt-5 text-lg text-tinta-suave">
+          Cada pieza tiene su referencia — la que le dices a Lissy cuando escribes. Filtra por categoría,
+          busca por nombre o color, y pide la que quieras por WhatsApp con el mensaje ya escrito.
+          Desde ${desde.toLocaleString('es-CO')}.
+        </p>
+      </div>
+
+      <!-- Accesos rápidos a cada categoría -->
+      <ul class="mt-10 flex flex-wrap gap-3">
+        {
+          categorias.map((c) => (
+            <li>
+              <a
+                href={`/catalogo/${c.slug}`}
+                class="inline-flex items-center gap-2 rounded-full border border-tinta/12 bg-white px-4 py-2 text-sm text-tinta-suave transition hover:border-rosa hover:text-tinta"
+              >
+                {c.nombre}
+                <Icon name="ph:arrow-up-right" class="h-3.5 w-3.5" aria-hidden="true" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-10">
+        <FiltroCatalogo modo="filtro" total={coleccion.length} />
+
+        <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-grid>
+          {coleccion.map((p, i) => <TarjetaProducto producto={p} indice={i} prioridad={i < 3} />)}
+        </ul>
+
+        <p
+          class="mt-10 rounded-petalo border border-dashed border-tinta/15 px-6 py-14 text-center text-tinta-suave"
+          data-vacio
+          hidden
+        >
+          No hay referencias con esos filtros. Prueba con otra palabra o
+          <a href="/catalogo" class="text-rosa-hondo underline underline-offset-4">mira el catálogo completo</a>.
+        </p>
+      </div>
+    </div>
+
+    <Tamanos />
+  </main>
+
+  <PieDePagina />
+  <BotonWhatsapp />
+</Layout>
+
+<script>
+  import { revelar } from '../../scripts/revelar';
+  revelar();
+</script>

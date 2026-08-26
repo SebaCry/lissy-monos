@@ -1,0 +1,28 @@
+---
+import { Icon } from 'astro-icon/components';
+import { notaCuidado, enlaces } from '../data/site';
+---
+
+<section class="relative overflow-hidden bg-tinta py-20 text-crema lg:py-28">
+  <div class="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-rosa/20 blur-3xl" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-3xl px-5 text-center lg:px-10">
+    <span class="grid h-12 w-12 place-items-center rounded-full bg-crema/10 text-rosa mx-auto" aria-hidden="true">
+      <Icon name="ph:drop-half-bottom-duotone" class="h-6 w-6" />
+    </span>
+
+    <p class="eyebrow mt-6 text-rosa!" data-reveal="fadeIn">{notaCuidado.eyebrow}</p>
+
+    <blockquote data-reveal="fadeInUp">
+      <h2 class="mt-4 text-[clamp(2rem,4.6vw,3.2rem)] text-crema">{notaCuidado.titulo}</h2>
+      <p class="mt-6 text-lg text-crema/75">{notaCuidado.texto}</p>
+      <footer class="mt-7 font-mono text-[0.68rem] tracking-[0.18em] text-crema/45 uppercase">
+        <cite class="not-italic">
+          <a href={enlaces.instagram} target="_blank" rel="noopener" class="transition hover:text-rosa">
+            {notaCuidado.fuente}
+          </a>
+        </cite>
+      </footer>
+    </blockquote>
+  </div>
+</section>

@@ -1,0 +1,139 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '../../layouts/Layout.astro';
+import Encabezado from '../../components/Encabezado.astro';
+import PieDePagina from '../../components/PieDePagina.astro';
+import BotonWhatsapp from '../../components/BotonWhatsapp.astro';
+import MigasDePan from '../../components/MigasDePan.astro';
+import FiltroCatalogo from '../../components/FiltroCatalogo.astro';
+import TarjetaProducto from '../../components/TarjetaProducto.astro';
+import Tamanos from '../../components/Tamanos.astro';
+
+import {
+  categorias,
+  productosDe,
+  marca,
+  precioEnNumero,
+  rutaProducto,
+  type InfoCategoria,
+} from '../../data/site';
+
+export const getStaticPaths = (() =>
+  categorias.map((categoria) => ({
+    params: { categoria: categoria.slug },
+    props: { categoria },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  categoria: InfoCategoria;
+}
+
+const { categoria } = Astro.props;
+const productos = productosDe(categoria.id);
+
+const sitio = Astro.site?.toString().replace(/\/$/, '') ?? 'https://lissymonos.com';
+const url = `${sitio}/catalogo/${categoria.slug}`;
+
+const title = `${categoria.nombre} hechos a mano en ${marca.ciudad} — ${marca.nombre}`;
+const description = `${categoria.lead} ${productos.length} ${productos.length === 1 ? 'referencia' : 'referencias'} con precio, listas para pedir por WhatsApp.`;
+
+const migas = [
+  { texto: 'Inicio', href: '/' },
+  { texto: 'Catálogo', href: '/catalogo' },
+  { texto: categoria.nombre },
+];
+
+const schemaMigas = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${sitio}/` },
+    { '@type': 'ListItem', position: 2, name: 'Catálogo', item: `${sitio}/catalogo` },
+    { '@type': 'ListItem', position: 3, name: categoria.nombre, item: url },
+  ],
+};
+
+const schemaLista = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `${categoria.nombre} — ${marca.nombre}`,
+  numberOfItems: productos.length,
+  itemListElement: productos.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: `${p.ref} — ${p.nombre}`,
+    url: `${sitio}${rutaProducto(p)}`,
+    ...(p.foto ? { image: `${sitio}${p.foto}` } : {}),
+  })),
+};
+
+const conPrecio = productos.map((p) => precioEnNumero(p.precio)).filter((n): n is number => n !== null);
+const desde = conPrecio.length ? Math.min(...conPrecio) : null;
+---
+
+<Layout
+  title={title}
+  description={description}
+  image={categoria.foto}
+  schema={[schemaMigas, schemaLista]}
+>
+  <Encabezado />
+
+  <main id="contenido" class="pt-28 lg:pt-32">
+    <div class="mx-auto max-w-7xl px-5 lg:px-10">
+      <MigasDePan items={migas} class="mb-6" />
+
+      <div class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+        <div>
+          <p class="eyebrow">Catálogo · {categoria.nombre}</p>
+          <h1 class="mt-4 text-[clamp(2.2rem,5vw,3.4rem)]">{categoria.nombre}</h1>
+          <p class="mt-5 text-lg text-tinta-suave">{categoria.lead}</p>
+          <p class="mt-4 font-mono text-[0.68rem] tracking-[0.18em] text-tinta-suave/70 uppercase">
+            {productos.length} {productos.length === 1 ? 'referencia' : 'referencias'}
+            {desde !== null && ` · desde $${desde.toLocaleString('es-CO')}`}
+          </p>
+        </div>
+
+        <figure class="overflow-hidden rounded-petalo shadow-suave ring-1 ring-tinta/5" data-reveal="fadeIn">
+          <img
+            src={categoria.foto}
+            alt={categoria.alt}
+            width="800"
+            height="600"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            class="aspect-4/3 w-full object-cover"
+          />
+        </figure>
+      </div>
+
+      <div class="mt-12">
+        <FiltroCatalogo modo="navegacion" categoriaActiva={categoria.id} total={productos.length} />
+
+        <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-grid>
+          {productos.map((p, i) => <TarjetaProducto producto={p} indice={i} prioridad={i < 3} />)}
+        </ul>
+
+        <p
+          class="mt-10 rounded-petalo border border-dashed border-tinta/15 px-6 py-14 text-center text-tinta-suave"
+          data-vacio
+          hidden
+        >
+          No hay referencias con esa búsqueda dentro de {categoria.nombre}.
+          <a href="/catalogo" class="text-rosa-hondo underline underline-offset-4">Busca en todo el catálogo</a>.
+        </p>
+      </div>
+    </div>
+
+    {categoria.id === 'scrunchie' && <Tamanos />}
+  </main>
+
+  <PieDePagina />
+  <BotonWhatsapp />
+</Layout>
+
+<script>
+  import { revelar } from '../../scripts/revelar';
+  revelar();
+</script>

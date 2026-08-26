@@ -1,0 +1,67 @@
+---
+import { Icon } from 'astro-icon/components';
+import { pasos, enlaces, whatsapp, marca } from '../data/site';
+import Titulo from './Titulo.astro';
+---
+
+<section id="comprar" class="mx-auto max-w-7xl px-5 py-20 lg:px-10 lg:py-28">
+  <Titulo
+    eyebrow="Cómo comprar"
+    titulo="Tres pasos y ya está en camino"
+    alineacion="centro"
+    lead="No hay carrito ni formularios. Se hace por WhatsApp, como se ha hecho siempre."
+  />
+
+  <ol class="mt-16 grid gap-10 md:grid-cols-3">
+    {
+      pasos.map((paso, i) => (
+        <li class="relative" data-reveal="fadeInUp" style={`--retraso:${i * 120}ms`}>
+          {/* La línea punteada une los pasos: es una secuencia real */}
+          {i < pasos.length - 1 && (
+            <span
+              class="absolute top-6 left-[calc(50%+2.5rem)] hidden h-px w-[calc(100%-5rem)] border-t-2 border-dashed border-rosa/40 md:block"
+              aria-hidden="true"
+            />
+          )}
+          <div class="flex flex-col items-center text-center">
+            <span class="grid h-12 w-12 place-items-center rounded-full bg-rosa-hondo font-mono text-sm text-white">
+              {i + 1}
+            </span>
+            <h3 class="mt-6 font-display text-2xl">{paso.titulo}</h3>
+            <p class="mt-2.5 max-w-xs text-[0.98rem] text-tinta-suave">{paso.texto}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="mt-14 flex flex-wrap justify-center gap-3" data-reveal="fadeIn">
+    <a
+      href={enlaces.catalogoDetal}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex items-center gap-2.5 rounded-full border border-tinta/15 px-6 py-3.5 text-sm font-medium text-tinta transition hover:border-rosa hover:bg-rubor/60"
+    >
+      <Icon name="ph:book-open-duotone" class="h-4 w-4" aria-hidden="true" />
+      Catálogo al detal
+    </a>
+    <a
+      href={enlaces.catalogoNavidad}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex items-center gap-2.5 rounded-full border border-tinta/15 px-6 py-3.5 text-sm font-medium text-tinta transition hover:border-rosa hover:bg-rubor/60"
+    >
+      <Icon name="ph:gift-duotone" class="h-4 w-4" aria-hidden="true" />
+      Navidad de ensueño · niñas
+    </a>
+    <a
+      href={whatsapp(`Hola ${marca.nombre} 🎀 Quiero hacer un pedido.`)}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex items-center gap-2.5 rounded-full bg-tinta px-6 py-3.5 text-sm font-medium text-crema transition hover:bg-rosa-hondo"
+    >
+      <Icon name="simple-icons:whatsapp" class="h-4 w-4" aria-hidden="true" />
+      Empezar el pedido
+    </a>
+  </div>
+</section>

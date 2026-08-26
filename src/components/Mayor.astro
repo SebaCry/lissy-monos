@@ -1,0 +1,88 @@
+---
+import { Icon } from 'astro-icon/components';
+import { mayor, whatsapp, marca, tonoPorCodigo } from '../data/site';
+import Arte from './Arte.astro';
+
+const cta = whatsapp(
+  `Hola ${marca.nombre} 🎀 Tengo un negocio y quiero comprar al por mayor. ¿Me pasas la lista de precios por cantidad?`,
+);
+
+/** Versión clara de un hex, para el segundo tono del degradado. */
+function aclarar(hex: string, mezcla = 0.5): string {
+  const n = parseInt(hex.slice(1), 16);
+  const canal = (desplazamiento: number) => {
+    const c = (n >> desplazamiento) & 255;
+    return Math.round(c + (255 - c) * mezcla);
+  };
+  return `rgb(${canal(16)} ${canal(8)} ${canal(0)})`;
+}
+
+/* Una fila de moños de distintos tonos: el pedido al por mayor, dibujado. */
+const surtido = ['LM-03', 'LM-05', 'LM-06', 'LM-07', 'LM-08', 'LM-10'].map(tonoPorCodigo);
+---
+
+<section id="mayor" class="relative overflow-hidden py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    <div
+      class="puntada relative overflow-hidden bg-white p-8 sm:p-12 lg:p-16"
+      data-reveal="fadeInUp"
+    >
+      <div class="grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-16">
+        <div>
+          <p class="eyebrow">Para negocios</p>
+          <h2 class="mt-4 text-[clamp(2rem,4.4vw,3rem)]">{mayor.titulo}</h2>
+          <p class="mt-5 text-lg text-tinta-suave">{mayor.intro}</p>
+
+          <ul class="mt-8 space-y-3.5">
+            {
+              mayor.puntos.map((punto) => (
+                <li class="flex gap-3.5">
+                  <Icon
+                    name="ph:check-circle-duotone"
+                    class="mt-0.5 h-5 w-5 shrink-0 text-rosa-hondo"
+                    aria-hidden="true"
+                  />
+                  <span class="text-[0.98rem] text-tinta-suave">{punto}</span>
+                </li>
+              ))
+            }
+          </ul>
+
+          <a
+            href={cta}
+            target="_blank"
+            rel="noopener"
+            class="mt-9 inline-flex items-center gap-2.5 rounded-full bg-rosa-hondo px-7 py-4 font-medium text-white shadow-alto transition hover:-translate-y-0.5 hover:bg-tinta"
+          >
+            <Icon name="simple-icons:whatsapp" class="h-5 w-5" aria-hidden="true" />
+            Pedir precios por mayor
+          </a>
+        </div>
+
+        <!-- Surtido -->
+        <div class="relative">
+          <div class="flex flex-wrap justify-center gap-2 sm:gap-4">
+            {
+              surtido.map((tono, i) => (
+                <div
+                  class="flotar w-[28%] max-w-36 drop-shadow-[0_14px_20px_rgba(74,42,56,0.16)]"
+                  style={`animation-delay:${(i * -1.4).toFixed(1)}s`}
+                >
+                  <Arte
+                    tipo={i % 2 === 0 ? 'mono' : 'scrunchie'}
+                    tono={tono.hex}
+                    tonoSecundario={aclarar(tono.hex)}
+                    uid={`mayor-${i}`}
+                  />
+                </div>
+              ))
+            }
+          </div>
+          <p class="mt-6 text-center font-mono text-[0.68rem] tracking-[0.18em] text-tinta-suave/80 uppercase">
+            Surtido a tu gusto
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

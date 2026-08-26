@@ -1,0 +1,31 @@
+---
+import { Icon } from 'astro-icon/components';
+import { resenas } from '../data/site';
+import Titulo from './Titulo.astro';
+---
+
+<section class="mx-auto max-w-7xl px-5 py-20 lg:px-10 lg:py-28">
+  <Titulo eyebrow="Clientas" titulo="Lo que dicen quienes ya los usan" alineacion="centro" />
+
+  <ul class="mt-14 grid gap-6 md:grid-cols-3">
+    {
+      resenas.map((r, i) => (
+        <li
+          class="flex flex-col rounded-petalo bg-white p-8 shadow-suave ring-1 ring-tinta/5"
+          data-reveal="fadeInUp"
+          style={`--retraso:${i * 110}ms`}
+        >
+          <div class="flex gap-0.5 text-oro" aria-label="5 de 5 estrellas">
+            {Array.from({ length: 5 }, () => (
+              <Icon name="ph:star-fill" class="h-4 w-4" aria-hidden="true" />
+            ))}
+          </div>
+          <blockquote class="mt-5 flex-1 font-display text-lg leading-snug">«{r.texto}»</blockquote>
+          <p class="mt-6 font-mono text-[0.68rem] tracking-[0.16em] text-tinta-suave uppercase">
+            {r.autora} · {r.lugar}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+</section>

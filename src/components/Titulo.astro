@@ -1,0 +1,21 @@
+---
+interface Props {
+  eyebrow: string;
+  titulo: string;
+  lead?: string;
+  alineacion?: 'izquierda' | 'centro';
+  class?: string;
+}
+
+const { eyebrow, titulo, lead, alineacion = 'izquierda', class: clase = '' } = Astro.props;
+const centro = alineacion === 'centro';
+---
+
+<div
+  class={`${centro ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'} ${clase}`}
+  data-reveal="fadeInUp"
+>
+  <p class="eyebrow">{eyebrow}</p>
+  <h2 class="mt-4 text-[clamp(2rem,4.4vw,3.1rem)]">{titulo}</h2>
+  {lead && <p class="mt-5 text-lg text-tinta-suave">{lead}</p>}
+</div>

@@ -1,0 +1,28 @@
+{
+  "name": "lissy-monos",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page de LISSY MOÑOS — accesorios para el cabello hechos a mano en Ibagué, Tolima.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "imagenes": "node scripts/generar-imagenes.mjs",
+    "arte": "node scripts/vista-previa-arte.mjs"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/sitemap": "^3.7.3",
+    "@iconify-json/ph": "^1.2.2",
+    "@iconify-json/simple-icons": "^1.2.55",
+    "@tailwindcss/vite": "^4.3.3",
+    "animate.css": "^4.1.1",
+    "astro": "^7.2.7",
+    "astro-icon": "^1.2.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  }
+}

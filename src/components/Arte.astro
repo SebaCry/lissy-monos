@@ -1,0 +1,183 @@
+---
+/* Ilustraciones de la marca dibujadas en SVG.
+   Sirven de respaldo mientras no haya foto real del producto y como
+   material gráfico del hero. Toman el color del producto, así que la
+   página completa se retiñe cambiando un hex en src/data/site.ts. */
+
+interface Props {
+  tipo?: 'mono' | 'scrunchie' | 'cosmetiquera';
+  tono?: string;
+  tonoSecundario?: string;
+  class?: string;
+  /** Identificador único: los gradientes de SVG no pueden repetir id. */
+  uid?: string;
+  titulo?: string;
+}
+
+const {
+  tipo = 'mono',
+  tono = '#F2789F',
+  tonoSecundario = '#FBD3DE',
+  class: clase = '',
+  uid = Math.random().toString(36).slice(2, 8),
+  titulo,
+} = Astro.props;
+
+const gid = `g-${uid}`;
+
+/** Anillo de tela fruncida para el scrunchie. */
+function anilloFruncido(
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+  lobulos: number,
+  amplitud: number,
+  desfase = 0,
+): string {
+  const pasos = lobulos * 16;
+  let d = '';
+  for (let i = 0; i <= pasos; i++) {
+    const t = (i / pasos) * Math.PI * 2;
+    const r = 1 + amplitud * Math.sin(t * lobulos + desfase);
+    const x = cx + Math.cos(t) * rx * r;
+    const y = cy + Math.sin(t) * ry * r;
+    d += `${i === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`;
+  }
+  return `${d}Z`;
+}
+
+const exterior = anilloFruncido(100, 100, 74, 60, 13, 0.055);
+const interiorAnillo = anilloFruncido(100, 100, 30, 24, 13, 0.09, Math.PI);
+
+/** Pliegues radiales del frunce. */
+const pliegues = Array.from({ length: 26 }, (_, i) => {
+  const t = (i / 26) * Math.PI * 2;
+  const x1 = 100 + Math.cos(t) * 34;
+  const y1 = 100 + Math.sin(t) * 27;
+  const x2 = 100 + Math.cos(t) * 70;
+  const y2 = 100 + Math.sin(t) * 57;
+  return { x1: x1.toFixed(1), y1: y1.toFixed(1), x2: x2.toFixed(1), y2: y2.toFixed(1) };
+});
+---
+
+<svg
+  viewBox="0 0 200 200"
+  class={clase}
+  role={titulo ? 'img' : 'presentation'}
+  aria-hidden={titulo ? undefined : 'true'}
+  aria-label={titulo}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id={gid} x1="18%" y1="4%" x2="86%" y2="98%">
+      <stop offset="0%" stop-color={tonoSecundario} />
+      <stop offset="52%" stop-color={tono} />
+      <stop offset="100%" stop-color={tono} />
+    </linearGradient>
+  </defs>
+
+  {
+    tipo === 'mono' && (
+      <g>
+        {/* colas */}
+        <path
+          d="M95 96 C86 124 72 146 50 164 C62 170 78 168 88 158 C99 138 104 116 106 100 Z"
+          fill={`url(#${gid})`}
+        />
+        <path
+          d="M105 96 C114 124 128 146 150 164 C138 170 122 168 112 158 C101 138 96 116 94 100 Z"
+          fill={`url(#${gid})`}
+        />
+        <path
+          d="M95 96 C86 124 72 146 50 164 C62 170 78 168 88 158 C99 138 104 116 106 100 Z"
+          fill="#2C1A22"
+          opacity="0.12"
+        />
+
+        {/* lazos */}
+        <path
+          d="M100 92 C72 48 24 44 16 78 C9 110 60 116 100 96 Z"
+          fill={`url(#${gid})`}
+        />
+        <path
+          d="M100 92 C128 48 176 44 184 78 C191 110 140 116 100 96 Z"
+          fill={`url(#${gid})`}
+        />
+        <path
+          d="M100 92 C74 62 44 58 30 72 C48 66 76 76 100 96 Z"
+          fill="#2C1A22"
+          opacity="0.13"
+        />
+        <path
+          d="M100 92 C126 62 156 58 170 72 C152 66 124 76 100 96 Z"
+          fill="#2C1A22"
+          opacity="0.13"
+        />
+        <path
+          d="M34 62 C48 52 66 54 78 64 C64 60 48 58 34 62 Z"
+          fill="#fff"
+          opacity="0.5"
+        />
+
+        {/* nudo */}
+        <ellipse cx="100" cy="94" rx="17" ry="15" fill={tono} />
+        <ellipse cx="100" cy="94" rx="17" ry="15" fill="#2C1A22" opacity="0.16" />
+        <ellipse cx="95" cy="89" rx="6" ry="4.5" fill="#fff" opacity="0.45" />
+      </g>
+    )
+  }
+
+  {
+    tipo === 'scrunchie' && (
+      <g>
+        <path
+          d={`${exterior}${interiorAnillo}`}
+          fill={`url(#${gid})`}
+          fill-rule="evenodd"
+        />
+        <g stroke="#2C1A22" stroke-width="1.4" opacity="0.14" stroke-linecap="round">
+          {pliegues.map((p) => (
+            <line x1={p.x1} y1={p.y1} x2={p.x2} y2={p.y2} />
+          ))}
+        </g>
+        <path
+          d="M42 66 C56 48 78 40 100 40"
+          fill="none"
+          stroke="#fff"
+          stroke-width="7"
+          stroke-linecap="round"
+          opacity="0.42"
+        />
+      </g>
+    )
+  }
+
+  {
+    tipo === 'cosmetiquera' && (
+      <g>
+        <path
+          d="M34 78 C34 66 44 58 56 58 H144 C156 58 166 66 166 78 V140 C166 152 156 160 144 160 H56 C44 160 34 152 34 140 Z"
+          fill={`url(#${gid})`}
+        />
+        <path
+          d="M34 78 C34 66 44 58 56 58 H144 C156 58 166 66 166 78 V88 H34 Z"
+          fill="#2C1A22"
+          opacity="0.12"
+        />
+        <line x1="40" y1="84" x2="160" y2="84" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.7" />
+        <g stroke="#2C1A22" stroke-width="1.6" opacity="0.28">
+          {Array.from({ length: 20 }, (_, i) => (
+            <line x1={42 + i * 6.2} y1="79" x2={42 + i * 6.2} y2="89" />
+          ))}
+        </g>
+        {/* Tirador del cierre */}
+        <g opacity="0.42" fill="none" stroke="#2C1A22" stroke-linecap="round">
+          <circle cx="134" cy="84" r="5.5" stroke-width="2.6" />
+          <path d="M134 89.5 V96" stroke-width="2.4" />
+          <rect x="128.5" y="96" width="11" height="20" rx="5.5" stroke-width="2.4" />
+        </g>
+      </g>
+    )
+  }
+</svg>

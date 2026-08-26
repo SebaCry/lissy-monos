@@ -1,0 +1,35 @@
+---
+import { Icon } from 'astro-icon/components';
+import { preguntas } from '../data/site';
+import Titulo from './Titulo.astro';
+---
+
+<section id="preguntas" class="bg-rubor py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    <div class="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+      <Titulo
+        eyebrow="Preguntas"
+        titulo="Lo que más nos preguntan"
+        lead="Si te queda alguna duda, escríbenos por WhatsApp: contestamos en el día."
+      />
+
+      <div class="divide-y divide-tinta/10 border-y border-tinta/10" data-reveal="fadeIn">
+        {
+          preguntas.map((item) => (
+            <details class="group py-5" name="preguntas">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-display text-xl transition group-open:text-rosa-hondo [&::-webkit-details-marker]:hidden">
+                {item.p}
+                <Icon
+                  name="ph:plus"
+                  class="h-5 w-5 shrink-0 text-rosa-hondo transition-transform duration-300 group-open:rotate-45"
+                  aria-hidden="true"
+                />
+              </summary>
+              <p class="mt-3 max-w-2xl pr-10 text-[0.98rem] text-tinta-suave">{item.r}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

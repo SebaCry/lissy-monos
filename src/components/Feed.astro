@@ -1,0 +1,60 @@
+---
+import { Icon } from 'astro-icon/components';
+import { feed, enlaces, marca } from '../data/site';
+import Foto from './Foto.astro';
+import Titulo from './Titulo.astro';
+---
+
+<section id="feed" class="mx-auto max-w-7xl px-5 py-20 lg:px-10 lg:py-28">
+  <div class="flex flex-wrap items-end justify-between gap-8">
+    <Titulo
+      eyebrow={marca.handle}
+      titulo="Lo último del taller"
+      lead="Publicamos los tonos nuevos, los pedidos que salen y los tips de cuidado apenas pasan."
+    />
+    <a
+      href={enlaces.instagram}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex items-center gap-2.5 rounded-full border border-tinta/15 px-6 py-3.5 text-sm font-medium text-tinta transition hover:border-rosa hover:bg-rubor/60"
+      data-reveal="fadeIn"
+    >
+      <Icon name="simple-icons:instagram" class="h-4 w-4" aria-hidden="true" />
+      Seguir en Instagram
+    </a>
+  </div>
+
+  <ul class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      feed.map((item, i) => (
+        <li data-reveal="fadeInUp" style={`--retraso:${(i % 3) * 90}ms`}>
+          <a
+            href={item.href}
+            target="_blank"
+            rel="noopener"
+            class="group relative block aspect-square overflow-hidden rounded-petalo ring-1 ring-tinta/5"
+          >
+            <div class="h-full w-full transition-transform duration-700 ease-[var(--ease-cinta)] group-hover:scale-105">
+              <Foto
+                foto={item.foto}
+                alt={item.alt}
+                tipo={item.tipo}
+                tono={item.tono}
+                tonoSecundario={item.tonoSecundario}
+                uid={`feed-${item.id}`}
+              />
+            </div>
+
+            <div class="absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-tinta/85 via-tinta/45 to-transparent p-5 pt-14 opacity-0 transition duration-500 ease-[var(--ease-cinta)] group-hover:translate-y-0 group-hover:opacity-100">
+              <p class="text-[0.95rem] leading-snug text-crema">{item.titulo}</p>
+            </div>
+
+            <span class="absolute top-4 right-4 grid h-9 w-9 place-items-center rounded-full bg-white/85 text-rosa-hondo opacity-0 backdrop-blur-sm transition duration-500 group-hover:opacity-100">
+              <Icon name="simple-icons:instagram" class="h-4 w-4" aria-hidden="true" />
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

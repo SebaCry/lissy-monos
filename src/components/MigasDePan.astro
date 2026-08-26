@@ -1,0 +1,34 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  /** El último elemento es la página actual y no lleva enlace. */
+  items: { texto: string; href?: string }[];
+  class?: string;
+}
+
+const { items, class: clase = '' } = Astro.props;
+---
+
+<nav aria-label="Migas de pan" class={clase}>
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-tinta-suave">
+    {
+      items.map((item, i) => (
+        <li class="flex items-center gap-2">
+          {i > 0 && (
+            <Icon name="ph:caret-right" class="h-3 w-3 text-tinta-suave/45" aria-hidden="true" />
+          )}
+          {item.href ? (
+            <a href={item.href} class="transition-colors hover:text-rosa-hondo">
+              {item.texto}
+            </a>
+          ) : (
+            <span aria-current="page" class="text-tinta">
+              {item.texto}
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

@@ -1,0 +1,31 @@
+---
+/* Cinta de satín que cruza la página: el hilo que une las secciones. */
+const frases = [
+  'Hecho a mano en Ibagué',
+  'Envíos a toda Colombia',
+  'Al por mayor y al detal',
+  'Materiales de alta calidad',
+  'Sujeta sin maltratar',
+  'Producción por encargo',
+];
+---
+
+<div class="relative overflow-hidden border-y border-rosa/25 bg-rosa-hondo py-3.5" aria-hidden="true">
+  <div class="cinta-pista flex w-max">
+    {
+      [0, 1].map(() => (
+        <ul class="flex shrink-0 items-center">
+          {frases.map((frase) => (
+            <li class="flex items-center gap-6 px-6 font-mono text-[0.72rem] tracking-[0.2em] text-white/90 uppercase whitespace-nowrap">
+              {frase}
+              <span class="text-white/45">✦</span>
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</div>
+<p class="sr-only">
+  Hecho a mano en Ibagué. Envíos a toda Colombia. Venta al por mayor y al detal.
+</p>

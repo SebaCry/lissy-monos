@@ -1,0 +1,106 @@
+---
+import '../styles/global.css';
+import { marca } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  /** Bloques JSON-LD ya serializados. */
+  schema?: unknown[];
+}
+
+const {
+  title,
+  description,
+  image = '/og-lissy-monos.png',
+  noindex = false,
+  schema = [],
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://lissymonos.com');
+const imagenAbsoluta = new URL(image, Astro.site ?? 'https://lissymonos.com');
+---
+
+<!doctype html>
+<html lang="es-CO" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Básico ------------------------------------------------- -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={marca.nombreLargo} />
+    <meta name="generator" content={Astro.generator} />
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
+    />
+    <meta name="theme-color" content="#FFFBF7" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="keywords"
+      content="moños hechos a mano, scrunchies Colombia, accesorios para el cabello Ibagué, cosmetiqueras, moños para niña, scrunchies al por mayor, Lissy Moños"
+    />
+
+    <!-- Geo ---------------------------------------------------- -->
+    <meta name="geo.region" content="CO-TOL" />
+    <meta name="geo.placename" content={`${marca.ciudad}, ${marca.departamento}`} />
+
+    <!-- Open Graph --------------------------------------------- -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={marca.nombreLargo} />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imagenAbsoluta} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${marca.nombre} — ${marca.lema}`} />
+
+    <!-- Twitter / X -------------------------------------------- -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imagenAbsoluta} />
+
+    <!-- Iconos ------------------------------------------------- -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Tipografías: Fraunces (display, con ejes SOFT y WONK),
+         Karla (texto) y DM Mono (códigos de la carta de colores) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Karla:wght@300..700&display=swap"
+    />
+
+    <!-- Datos estructurados ------------------------------------ -->
+    {
+      schema.map((bloque) => (
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={JSON.stringify(bloque)}
+        />
+      ))
+    }
+  </head>
+
+  <body>
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-tinta focus:px-5 focus:py-3 focus:text-sm focus:text-crema"
+    >
+      Saltar al contenido
+    </a>
+    <slot />
+  </body>
+</html>

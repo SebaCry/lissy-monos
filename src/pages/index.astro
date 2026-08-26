@@ -1,0 +1,167 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Encabezado from '../components/Encabezado.astro';
+import Portada from '../components/Portada.astro';
+import Cinta from '../components/Cinta.astro';
+import Beneficios from '../components/Beneficios.astro';
+import Categorias from '../components/Categorias.astro';
+import Destacados from '../components/Destacados.astro';
+import Estampados from '../components/Estampados.astro';
+import Colores from '../components/Colores.astro';
+import Cuidado from '../components/Cuidado.astro';
+import Fundadora from '../components/Fundadora.astro';
+import Comprar from '../components/Comprar.astro';
+import Mayor from '../components/Mayor.astro';
+import Feed from '../components/Feed.astro';
+import Resenas from '../components/Resenas.astro';
+import Preguntas from '../components/Preguntas.astro';
+import Cierre from '../components/Cierre.astro';
+import PieDePagina from '../components/PieDePagina.astro';
+import BotonWhatsapp from '../components/BotonWhatsapp.astro';
+
+import {
+  marca,
+  enlaces,
+  preguntas,
+  coleccion,
+  categorias,
+  resenas,
+  precioEnNumero,
+  rutaProducto,
+  rutaCategoria,
+} from '../data/site';
+
+const sitio = Astro.site?.toString().replace(/\/$/, '') ?? 'https://lissymonos.com';
+
+const title = `${marca.nombre} — Moños, scrunchies y cosmetiqueras hechos a mano | ${marca.ciudad}`;
+const description = marca.descripcion;
+
+/* --- Datos estructurados ---------------------------------------- */
+
+const negocio = {
+  '@context': 'https://schema.org',
+  '@type': 'Store',
+  '@id': `${sitio}/#tienda`,
+  name: marca.nombreLargo,
+  alternateName: marca.nombre,
+  slogan: marca.lema,
+  description: marca.descripcion,
+  url: sitio,
+  image: `${sitio}/og-lissy-monos.png`,
+  logo: `${sitio}/favicon.svg`,
+  priceRange: '$$',
+  currenciesAccepted: 'COP',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: marca.ciudad,
+    addressRegion: marca.departamento,
+    addressCountry: 'CO',
+  },
+  areaServed: { '@type': 'Country', name: 'Colombia' },
+  sameAs: [enlaces.instagram, enlaces.linktree],
+  founder: { '@type': 'Person', name: marca.fundadora },
+  makesOffer: coleccion.map((p) => ({
+    '@type': 'Offer',
+    url: `${sitio}${rutaProducto(p)}`,
+    itemOffered: {
+      '@type': 'Product',
+      name: p.nombre,
+      sku: p.ref,
+      description: `${p.resumen} ${p.detalle}`,
+      brand: { '@type': 'Brand', name: marca.nombre },
+      category: 'Accesorios para el cabello',
+      ...(p.foto ? { image: `${sitio}${p.foto}` } : {}),
+    },
+    availability: p.agotado ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+    priceCurrency: 'COP',
+    ...(precioEnNumero(p.precio) ? { price: precioEnNumero(p.precio) } : {}),
+  })),
+};
+
+const sitioWeb = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${sitio}/#sitio`,
+  url: sitio,
+  name: marca.nombreLargo,
+  inLanguage: 'es-CO',
+  publisher: { '@id': `${sitio}/#tienda` },
+};
+
+const faq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: preguntas.map((item) => ({
+    '@type': 'Question',
+    name: item.p,
+    acceptedAnswer: { '@type': 'Answer', text: item.r },
+  })),
+};
+
+/* Las categorías del catálogo, para que el buscador entienda la
+   estructura del sitio y pueda enlazar directo a cada listado. */
+const catalogo = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `Catálogo ${marca.nombre}`,
+  numberOfItems: categorias.length,
+  itemListElement: categorias.map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.nombre,
+    description: c.lead,
+    url: `${sitio}${rutaCategoria(c.id)}`,
+  })),
+};
+
+/* Las reseñas de src/data/site.ts son de ejemplo. Cuando las reemplaces
+   por reseñas reales y verificables, este bloque queda listo para
+   publicarse; mientras tanto no se emite para no marcar contenido
+   inventado como datos estructurados. */
+const RESENAS_VERIFICADAS = false;
+const opiniones = RESENAS_VERIFICADAS
+  ? [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: `Accesorios ${marca.nombre}`,
+        review: resenas.map((r) => ({
+          '@type': 'Review',
+          reviewBody: r.texto,
+          author: { '@type': 'Person', name: r.autora },
+          reviewRating: { '@type': 'Rating', ratingValue: 5, bestRating: 5 },
+        })),
+      },
+    ]
+  : [];
+---
+
+<Layout title={title} description={description} schema={[negocio, sitioWeb, faq, catalogo, ...opiniones]}>
+  <Encabezado />
+
+  <main id="contenido">
+    <Portada />
+    <Cinta />
+    <Beneficios />
+    <Categorias />
+    <Destacados />
+    <Estampados />
+    <Colores />
+    <Cuidado />
+    <Fundadora />
+    <Comprar />
+    <Mayor />
+    <Feed />
+    <Resenas />
+    <Preguntas />
+    <Cierre />
+  </main>
+
+  <PieDePagina />
+  <BotonWhatsapp />
+</Layout>
+
+<script>
+  import { revelar } from '../scripts/revelar';
+  revelar();
+</script>

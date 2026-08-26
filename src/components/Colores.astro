@@ -1,0 +1,65 @@
+---
+import { Icon } from 'astro-icon/components';
+import { cartaDeColores, fotosDeColor, whatsapp, marca } from '../data/site';
+import Titulo from './Titulo.astro';
+---
+
+<section id="colores" class="relative overflow-hidden bg-rubor py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.35fr] lg:items-start lg:gap-16">
+      <div>
+        <Titulo
+          eyebrow="Carta de colores"
+          titulo="El tono manda"
+          lead="Estos son los tonos base que siempre tenemos en taller. El inventario se mueve cada semana, así que escríbenos y te mandamos la foto de lo que hay hoy."
+        />
+
+        <a
+          href={whatsapp(`Hola ${marca.nombre} 🎀 ¿Me envías la carta de colores disponible hoy?`)}
+          target="_blank"
+          rel="noopener"
+          class="mt-8 inline-flex items-center gap-2.5 rounded-full bg-tinta px-6 py-3.5 text-sm font-medium text-crema transition hover:bg-rosa-hondo"
+          data-reveal="fadeInUp"
+        >
+          <Icon name="simple-icons:whatsapp" class="h-4 w-4" aria-hidden="true" />
+          Pedir la carta del día
+        </a>
+      </div>
+
+      <!-- Muestrario: cada chip es una tarjeta de tela con su código -->
+      <ul class="grid grid-cols-2 gap-x-5 gap-y-7 sm:grid-cols-3 lg:grid-cols-4" data-reveal="fadeIn">
+        {
+          cartaDeColores.map((tono, i) => (
+            <li class="group" style={`--retraso:${i * 30}ms`}>
+              <div
+                class="aspect-4/5 w-full rounded-2xl transition-transform duration-500 ease-[var(--ease-cinta)] group-hover:-translate-y-1.5 group-hover:rotate-[-2deg]"
+                style={`background:${tono.hex};box-shadow:inset 0 -14px 26px -16px rgba(0,0,0,.45), inset 0 0 0 1px rgba(44,26,34,.1), 0 10px 20px -14px rgba(74,42,56,.5)`}
+              />
+              <p class="mt-2.5 font-mono text-[0.62rem] tracking-[0.14em] text-tinta-suave/80">{tono.codigo}</p>
+              <p class="text-[0.9rem] leading-snug text-tinta">{tono.nombre}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Fotos reales del inventario, tomadas del catálogo -->
+    <ul class="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5" data-reveal="fadeInUp">
+      {
+        fotosDeColor.map((f) => (
+          <li class="overflow-hidden rounded-petalo shadow-suave ring-1 ring-tinta/5">
+            <img
+              src={f.foto}
+              alt={f.alt}
+              loading="lazy"
+              decoding="async"
+              width="700"
+              height="700"
+              class="aspect-square w-full object-cover"
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,46 @@
+---
+import { Icon } from 'astro-icon/components';
+import { whatsappProducto, type Producto } from '../data/site';
+
+/* Botón «pedir esta referencia» por WhatsApp.
+
+   No hay API de por medio: es un enlace wa.me normal con el mensaje ya
+   escrito en el parámetro `text`, así que funciona en móvil (abre la
+   app) y en escritorio (abre WhatsApp Web) sin nada instalado. */
+
+interface Props {
+  producto: Producto;
+  variante?: 'principal' | 'contorno' | 'enlace';
+  class?: string;
+}
+
+const { producto, variante = 'principal', class: clase = '' } = Astro.props;
+
+const href = whatsappProducto(producto);
+const texto = producto.agotado ? 'Avísame cuando vuelva' : 'Pedir por WhatsApp';
+
+const estilos = {
+  principal:
+    'inline-flex items-center justify-center gap-2.5 rounded-full bg-rosa-hondo px-7 py-3.5 font-medium text-white shadow-suave transition hover:-translate-y-0.5 hover:bg-tinta hover:shadow-alto',
+  contorno:
+    'inline-flex items-center justify-center gap-2 rounded-full border border-tinta/15 px-5 py-2.5 text-sm font-medium text-tinta transition hover:border-rosa hover:bg-rubor/60',
+  enlace:
+    'inline-flex items-center gap-2 self-start border-b border-transparent pb-0.5 font-medium text-tinta transition hover:border-rosa hover:text-rosa-hondo',
+} as const;
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener"
+  class={`${estilos[variante]} ${clase}`}
+  aria-label={`${texto}: referencia ${producto.ref}, ${producto.nombre}`}
+  data-pedir={producto.ref}
+>
+  <Icon
+    name="simple-icons:whatsapp"
+    class={variante === 'principal' ? 'h-5 w-5' : 'h-4 w-4'}
+    aria-hidden="true"
+  />
+  {texto}
+</a>

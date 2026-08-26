@@ -1,0 +1,220 @@
+@import 'tailwindcss';
+@import 'animate.css';
+
+/* ------------------------------------------------------------------
+   LISSY MOÑOS — sistema de diseño
+   Dirección: "atelier de telas". Carta de colores, puntadas, cintas.
+   Paleta tomada del feed de @lissy_accesorios.co (rosa 🩷, nube ☁️, brillo ✨)
+------------------------------------------------------------------- */
+
+@theme {
+  /* Color -------------------------------------------------------- */
+  --color-crema: #fffbf7; /* base de página, blanco cálido */
+  --color-rubor: #fde7ee; /* lavado rosa para bloques */
+  --color-rosa: #f2789f; /* rosa marca, el 🩷 del perfil */
+  --color-rosa-hondo: #d9527c; /* hover / texto sobre claro */
+  --color-cielo: #bbd9ef; /* azul nube ☁️ */
+  --color-lila: #cdbdea; /* lila pastel */
+  --color-oro: #c79a4b; /* filetes y estrellas, con cuentagotas */
+  --color-tinta: #4a2a38; /* ciruela oscura: todo el texto */
+  --color-tinta-suave: #7d5b6a;
+
+  /* Tipografía --------------------------------------------------- */
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Karla', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.22em;
+
+  /* Ritmo -------------------------------------------------------- */
+  --radius-petalo: 1.75rem;
+  --shadow-suave: 0 18px 40px -24px rgb(74 42 56 / 0.35);
+  --shadow-alto: 0 30px 60px -30px rgb(217 82 124 / 0.45);
+
+  --ease-cinta: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ------------------------------------------------------------------
+   Base
+------------------------------------------------------------------- */
+
+@layer base {
+  :root {
+    color-scheme: light;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: var(--color-crema);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    /* Fraunces variable: opsz alto + SOFT al máximo + WONK = terminales blandas,
+       lo más cercano a una cinta de satín que da una serif. */
+    font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-rosa);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-rosa-hondo);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  img,
+  svg {
+    max-width: 100%;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Utilidades de marca
+------------------------------------------------------------------- */
+
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-rosa-hondo);
+}
+
+/* Borde de puntada: el contorno de un patrón de costura. */
+@utility puntada {
+  border: 1.5px dashed color-mix(in oklab, var(--color-rosa) 55%, white);
+  border-radius: var(--radius-petalo);
+}
+
+/* Papel de la marca: textura de lino muy tenue sobre crema. */
+@utility papel {
+  background-color: var(--color-crema);
+  background-image:
+    radial-gradient(circle at 20% 12%, color-mix(in oklab, var(--color-rubor) 90%, transparent), transparent 45%),
+    radial-gradient(circle at 84% 78%, color-mix(in oklab, var(--color-cielo) 40%, transparent), transparent 42%);
+}
+
+/* ------------------------------------------------------------------
+   Revelado al hacer scroll (lo dispara src/scripts/reveal.ts)
+------------------------------------------------------------------- */
+
+[data-reveal] {
+  opacity: 0;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+}
+
+.animate__animated {
+  --animate-duration: 0.9s;
+}
+
+/* ------------------------------------------------------------------
+   Cinta infinita
+------------------------------------------------------------------- */
+
+@keyframes cinta-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.cinta-pista {
+  animation: cinta-scroll 38s linear infinite;
+}
+
+/* Vaivén lento del moño del hero. */
+@keyframes moño-vaiven {
+  0%,
+  100% {
+    transform: rotate(-2.2deg) translateY(0);
+  }
+  50% {
+    transform: rotate(2.2deg) translateY(-10px);
+  }
+}
+
+.moño-vaiven {
+  animation: moño-vaiven 7s var(--ease-cinta) infinite;
+  transform-origin: 50% 42%;
+}
+
+@keyframes brillo-late {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.brillo {
+  animation: brillo-late 3.4s ease-in-out infinite;
+}
+
+@keyframes flotar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.flotar {
+  animation: flotar 9s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------
+   Accesibilidad: nada se mueve si el sistema pide calma
+------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+  }
+}

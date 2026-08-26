@@ -1,0 +1,32 @@
+---
+import { Icon } from 'astro-icon/components';
+import { productosDestacados, coleccion } from '../data/site';
+import TarjetaProducto from './TarjetaProducto.astro';
+import Titulo from './Titulo.astro';
+
+const productos = productosDestacados();
+---
+
+<section id="destacados" class="relative overflow-hidden bg-rubor py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    <Titulo
+      eyebrow="Las más pedidas"
+      titulo="Si es tu primera vez, empieza por aquí"
+      lead="Una de cada categoría, con su referencia y su precio. Toca la tarjeta para ver la ficha, o pide directo por WhatsApp."
+    />
+
+    <ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {productos.map((p, i) => <TarjetaProducto producto={p} indice={i} />)}
+    </ul>
+
+    <div class="mt-12 text-center" data-reveal="fadeIn">
+      <a
+        href="/catalogo"
+        class="inline-flex items-center gap-2.5 rounded-full bg-tinta px-8 py-4 font-medium text-crema shadow-suave transition hover:-translate-y-0.5 hover:bg-rosa-hondo"
+      >
+        Ver las {coleccion.length} referencias
+        <Icon name="ph:arrow-right" class="h-4 w-4" aria-hidden="true" />
+      </a>
+    </div>
+  </div>
+</section>

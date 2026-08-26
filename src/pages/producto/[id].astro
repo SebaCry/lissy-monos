@@ -1,0 +1,322 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Icon } from 'astro-icon/components';
+
+import Layout from '../../layouts/Layout.astro';
+import Encabezado from '../../components/Encabezado.astro';
+import PieDePagina from '../../components/PieDePagina.astro';
+import BotonWhatsapp from '../../components/BotonWhatsapp.astro';
+import MigasDePan from '../../components/MigasDePan.astro';
+import TarjetaProducto from '../../components/TarjetaProducto.astro';
+import BotonPedir from '../../components/BotonPedir.astro';
+import Foto from '../../components/Foto.astro';
+
+import {
+  coleccion,
+  categoriaDe,
+  relacionados,
+  mensajePedido,
+  precioEnNumero,
+  rutaCategoria,
+  rutaProducto,
+  politicas,
+  marca,
+} from '../../data/site';
+
+export const getStaticPaths = (() =>
+  coleccion.map((producto) => ({
+    params: { id: producto.id },
+    props: { producto },
+  }))) satisfies GetStaticPaths;
+
+/* El tipo de Astro.props lo infiere Astro desde getStaticPaths. */
+const { producto: p } = Astro.props;
+
+const categoria = categoriaDe(p.tipo);
+const otras = relacionados(p, 3);
+const precio = precioEnNumero(p.precio);
+const mensaje = mensajePedido(p);
+
+const sitio = Astro.site?.toString().replace(/\/$/, '') ?? 'https://lissymonos.com';
+const url = `${sitio}${rutaProducto(p)}`;
+
+const title = `${p.nombre} · ${p.ref}${p.precio ? ` — ${p.precio}` : ''} | ${marca.nombre}`;
+const description = `${p.resumen} ${p.detalle} Referencia ${p.ref}, hecha a mano en ${marca.ciudad}.`;
+
+/* Todas las fotos que tenemos de esta referencia. */
+const galeria = [
+  p.foto && { src: p.foto, alt: p.alt },
+  p.fotoAlterna && { src: p.fotoAlterna, alt: `${p.nombre}, segunda vista` },
+].filter(Boolean) as { src: string; alt: string }[];
+
+const migas = [
+  { texto: 'Inicio', href: '/' },
+  { texto: 'Catálogo', href: '/catalogo' },
+  { texto: categoria.nombre, href: rutaCategoria(p.tipo) },
+  { texto: p.nombre },
+];
+
+const schemaMigas = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: migas.map((m, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: m.texto,
+    item: m.href ? `${sitio}${m.href}` : url,
+  })),
+};
+
+const schemaProducto = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  '@id': `${url}#producto`,
+  name: p.nombre,
+  sku: p.ref,
+  mpn: p.ref,
+  description: `${p.resumen} ${p.detalle}`,
+  category: categoria.nombre,
+  brand: { '@type': 'Brand', name: marca.nombre },
+  ...(galeria.length ? { image: galeria.map((g) => `${sitio}${g.src}`) } : {}),
+  ...(p.colores?.length ? { color: p.colores.join(', ') } : {}),
+  offers: {
+    '@type': 'Offer',
+    url,
+    priceCurrency: 'COP',
+    ...(precio ? { price: precio } : {}),
+    availability: p.agotado ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
+    seller: { '@type': 'Organization', name: marca.nombreLargo },
+  },
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  image={p.foto ?? '/og-lissy-monos.png'}
+  schema={[schemaMigas, schemaProducto]}
+>
+  <Encabezado />
+
+  <main id="contenido" class="pt-28 lg:pt-32">
+    <div class="mx-auto max-w-7xl px-5 lg:px-10">
+      <MigasDePan items={migas} class="mb-8" />
+
+      <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+        <!-- Galería ------------------------------------------------ -->
+        <div>
+          <figure
+            class="relative overflow-hidden rounded-petalo bg-white shadow-suave ring-1 ring-tinta/5"
+            data-galeria
+          >
+            <div class="aspect-square">
+              <Foto
+                foto={p.foto}
+                alt={p.alt}
+                tipo={p.tipo}
+                tono={p.tono}
+                tonoSecundario={p.tonoSecundario}
+                uid={`ficha-${p.id}`}
+                foco={p.foco}
+                prioridad
+              />
+            </div>
+
+            {
+              p.agotado && (
+                <span class="absolute top-5 left-5 rounded-full bg-tinta/85 px-4 py-2 font-mono text-[0.66rem] tracking-[0.18em] text-crema uppercase backdrop-blur-sm">
+                  Agotado
+                </span>
+              )
+            }
+          </figure>
+
+          {
+            galeria.length > 1 && (
+              <ul class="mt-4 grid grid-cols-4 gap-3">
+                {galeria.map((g, i) => (
+                  <li>
+                    <button
+                      type="button"
+                      class:list={[
+                        'block w-full overflow-hidden rounded-2xl ring-1 transition',
+                        i === 0 ? 'ring-2 ring-rosa-hondo' : 'ring-tinta/10 hover:ring-rosa',
+                      ]}
+                      data-miniatura={g.src}
+                      aria-label={`Ver foto ${i + 1} de ${galeria.length}`}
+                    >
+                      <img
+                        src={g.src}
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                        width="200"
+                        height="200"
+                        class="aspect-square w-full object-cover"
+                      />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+
+        <!-- Ficha -------------------------------------------------- -->
+        <div>
+          <div class="flex flex-wrap items-center gap-3">
+            <a
+              href={rutaCategoria(p.tipo)}
+              class="inline-flex items-center gap-1.5 rounded-full bg-rubor px-3.5 py-1.5 font-mono text-[0.62rem] tracking-[0.16em] text-rosa-hondo uppercase transition hover:bg-rosa/25"
+            >
+              {categoria.nombre}
+            </a>
+            <span class="font-mono text-[0.7rem] tracking-[0.16em] text-tinta-suave/75">
+              Ref. {p.ref}
+            </span>
+            {
+              p.etiqueta && !p.agotado && (
+                <span class="rounded-full border border-tinta/12 px-3 py-1 font-mono text-[0.6rem] tracking-[0.16em] text-tinta-suave uppercase">
+                  {p.etiqueta}
+                </span>
+              )
+            }
+          </div>
+
+          <h1 class="mt-5 text-[clamp(2rem,4.4vw,3rem)] leading-[1.08]">{p.nombre}</h1>
+          <p class="mt-4 font-display text-xl text-rosa-hondo">{p.resumen}</p>
+
+          {
+            p.precio && (
+              <p class="mt-6 flex items-baseline gap-2">
+                <span class="font-display text-4xl text-tinta">{p.precio}</span>
+                {p.unidad && <span class="text-tinta-suave">por {p.unidad}</span>}
+              </p>
+            )
+          }
+
+          {
+            p.packs && (
+              <ul class="mt-4 flex flex-wrap gap-2">
+                {p.packs.map((pack) => (
+                  <li class="rounded-full bg-rubor/70 px-3.5 py-1.5 text-[0.86rem] text-tinta">{pack}</li>
+                ))}
+              </ul>
+            )
+          }
+
+          <p class="mt-6 text-[1.02rem] leading-relaxed text-tinta-suave">{p.detalle}</p>
+
+          {
+            p.colores && (
+              <div class="mt-7">
+                <p class="font-mono text-[0.62rem] tracking-[0.18em] text-tinta-suave/70 uppercase">
+                  Colores disponibles
+                </p>
+                <ul class="mt-3 flex flex-wrap gap-2">
+                  {p.colores.map((c) => (
+                    <li class="rounded-full border border-tinta/12 px-3.5 py-1.5 text-[0.88rem] text-tinta">
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          <!-- Pedido por WhatsApp --------------------------------- -->
+          <div class="mt-9 rounded-petalo border border-tinta/10 bg-white p-6 shadow-suave">
+            <BotonPedir producto={p} variante="principal" class="w-full sm:w-auto" />
+
+            <p class="mt-4 text-[0.86rem] text-tinta-suave">
+              Se abre WhatsApp con este mensaje ya escrito, solo pulsas enviar:
+            </p>
+            <p class="mt-2 rounded-2xl bg-rubor/50 px-4 py-3 text-[0.88rem] leading-relaxed text-tinta italic">
+              «{mensaje}»
+            </p>
+          </div>
+
+          <!-- Condiciones ---------------------------------------- -->
+          <dl class="mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2">
+            <div class="flex gap-3">
+              <Icon name="ph:clock-duotone" class="mt-0.5 h-5 w-5 shrink-0 text-rosa-hondo" aria-hidden="true" />
+              <div>
+                <dt class="text-[0.88rem] font-medium text-tinta">Elaboración</dt>
+                <dd class="text-[0.86rem] text-tinta-suave">{politicas.elaboracion}</dd>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <Icon name="ph:truck-duotone" class="mt-0.5 h-5 w-5 shrink-0 text-rosa-hondo" aria-hidden="true" />
+              <div>
+                <dt class="text-[0.88rem] font-medium text-tinta">Envíos</dt>
+                <dd class="text-[0.86rem] text-tinta-suave">{politicas.envios}</dd>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <Icon name="ph:wallet-duotone" class="mt-0.5 h-5 w-5 shrink-0 text-rosa-hondo" aria-hidden="true" />
+              <div>
+                <dt class="text-[0.88rem] font-medium text-tinta">Pagos</dt>
+                <dd class="text-[0.86rem] text-tinta-suave">{politicas.pagos.join(' · ')}</dd>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <Icon name="ph:arrows-counter-clockwise-duotone" class="mt-0.5 h-5 w-5 shrink-0 text-rosa-hondo" aria-hidden="true" />
+              <div>
+                <dt class="text-[0.88rem] font-medium text-tinta">Cambios</dt>
+                <dd class="text-[0.86rem] text-tinta-suave">{politicas.cambios}</dd>
+              </div>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Relacionados -------------------------------------------- -->
+      <section class="mt-24 lg:mt-32">
+        <div class="flex flex-wrap items-end justify-between gap-6 border-b border-tinta/10 pb-5">
+          <h2 class="font-display text-3xl">También te puede gustar</h2>
+          <a
+            href={rutaCategoria(p.tipo)}
+            class="inline-flex items-center gap-2 text-[0.95rem] text-tinta-suave transition hover:text-rosa-hondo"
+          >
+            Ver {categoria.nombre.toLowerCase()}
+            <Icon name="ph:arrow-right" class="h-4 w-4" aria-hidden="true" />
+          </a>
+        </div>
+
+        <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {otras.map((o, i) => <TarjetaProducto producto={o} indice={i} />)}
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <PieDePagina />
+  <BotonWhatsapp />
+</Layout>
+
+<script>
+  import { revelar } from '../../scripts/revelar';
+  revelar();
+
+  /* Miniaturas: cambian la foto grande sin recargar. */
+  const galeria = document.querySelector<HTMLElement>('[data-galeria]');
+  const principal = galeria?.querySelector<HTMLImageElement>('img');
+  const miniaturas = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-miniatura]'));
+
+  miniaturas.forEach((boton) => {
+    boton.addEventListener('click', () => {
+      const src = boton.dataset.miniatura;
+      if (!principal || !src) return;
+      principal.src = src;
+      miniaturas.forEach((otro) => {
+        const activo = otro === boton;
+        otro.classList.toggle('ring-2', activo);
+        otro.classList.toggle('ring-rosa-hondo', activo);
+        otro.classList.toggle('ring-tinta/10', !activo);
+        otro.classList.toggle('hover:ring-rosa', !activo);
+      });
+    });
+  });
+</script>

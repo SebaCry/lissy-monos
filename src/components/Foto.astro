@@ -1,0 +1,67 @@
+---
+import Arte from './Arte.astro';
+import { ilustracionDe, type Categoria } from '../data/site';
+
+/* Muestra la foto real si existe; si no, la ilustración de la marca.
+   Así la landing se ve terminada aunque a un producto le falte foto.
+
+   Las fotos del catálogo son verticales (formato historia) y las
+   tarjetas son cuadradas, así que el recorte lo hace object-cover.
+   Cuando ese recorte centrado no cae bien, se ajusta con `foco`. */
+
+interface Props {
+  foto?: string;
+  alt: string;
+  tipo?: Categoria;
+  tono?: string;
+  tonoSecundario?: string;
+  uid?: string;
+  class?: string;
+  /** object-position del recorte, ej. 'center 30%'. */
+  foco?: string;
+  /** La primera imagen visible no debe ir en lazy. */
+  prioridad?: boolean;
+}
+
+const {
+  foto,
+  alt,
+  tipo = 'mono',
+  tono = '#F2789F',
+  tonoSecundario = '#FBD3DE',
+  uid,
+  class: clase = '',
+  foco,
+  prioridad = false,
+} = Astro.props;
+---
+
+{
+  foto ? (
+    <img
+      src={foto}
+      alt={alt}
+      class={`h-full w-full object-cover ${clase}`}
+      style={foco ? `object-position:${foco}` : undefined}
+      loading={prioridad ? 'eager' : 'lazy'}
+      decoding="async"
+      fetchpriority={prioridad ? 'high' : 'auto'}
+      width="800"
+      height="800"
+    />
+  ) : (
+    <div
+      class={`grid h-full w-full place-items-center ${clase}`}
+      style={`background: radial-gradient(120% 100% at 30% 10%, ${tonoSecundario} 0%, color-mix(in oklab, ${tonoSecundario} 35%, #FFFBF7) 100%)`}
+    >
+      <Arte
+        tipo={ilustracionDe(tipo)}
+        tono={tono}
+        tonoSecundario={tonoSecundario}
+        uid={uid}
+        titulo={alt}
+        class="w-[62%] drop-shadow-[0_14px_22px_rgba(74,42,56,0.18)]"
+      />
+    </div>
+  )
+}

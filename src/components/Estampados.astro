@@ -1,0 +1,56 @@
+---
+import { Icon } from 'astro-icon/components';
+import { estampados, whatsapp, marca } from '../data/site';
+import Titulo from './Titulo.astro';
+---
+
+<section id="estampados" class="relative overflow-hidden bg-rubor py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    <div class="flex flex-wrap items-end justify-between gap-8">
+      <Titulo
+        eyebrow="Telas propias"
+        titulo="Estampados que no vas a ver en otro lado"
+        lead="Los estampados los diseñamos nosotras, uno por uno. No más accesorios genéricos: sé única, sé tú. Van en scrunchies, maximoños, lazos y pinzas."
+      />
+
+      <a
+        href={whatsapp(`Hola ${marca.nombre} 🎀 ¿Qué estampados tienes disponibles hoy?`)}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2.5 rounded-full bg-tinta px-6 py-3.5 text-sm font-medium text-crema transition hover:bg-rosa-hondo"
+        data-reveal="fadeIn"
+      >
+        <Icon name="simple-icons:whatsapp" class="h-4 w-4" aria-hidden="true" />
+        Preguntar por un estampado
+      </a>
+    </div>
+
+    <ul class="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+      {
+        estampados.map((e, i) => (
+          <li data-reveal="fadeInUp" style={`--retraso:${(i % 5) * 70}ms`}>
+            <figure class="group">
+              <div class="relative aspect-square overflow-hidden rounded-petalo shadow-suave ring-1 ring-tinta/5">
+                <img
+                  src={e.foto}
+                  alt={e.alt}
+                  loading="lazy"
+                  decoding="async"
+                  width="600"
+                  height="600"
+                  class="h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-cinta)] group-hover:scale-[1.08]"
+                />
+                {e.agotado && (
+                  <span class="absolute top-3 left-3 rounded-full bg-tinta/85 px-3 py-1 font-mono text-[0.58rem] tracking-[0.16em] text-crema uppercase backdrop-blur-sm">
+                    Agotado
+                  </span>
+                )}
+              </div>
+              <figcaption class="mt-3 text-[0.92rem] text-tinta">{e.nombre}</figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

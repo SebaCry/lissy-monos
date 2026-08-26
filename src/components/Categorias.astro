@@ -1,0 +1,76 @@
+---
+import { Icon } from 'astro-icon/components';
+import { categorias, productosDe, coleccion } from '../data/site';
+import Titulo from './Titulo.astro';
+---
+
+<section id="categorias" class="py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    <div class="flex flex-wrap items-end justify-between gap-8">
+      <Titulo
+        eyebrow="El catálogo"
+        titulo="Empieza por lo que buscas"
+        lead={`${coleccion.length} referencias repartidas en ${categorias.length} categorías. Entra a la que te interese o mira el catálogo completo con buscador y filtros.`}
+      />
+
+      <a
+        href="/catalogo"
+        class="inline-flex items-center gap-2.5 rounded-full bg-tinta px-6 py-3.5 text-sm font-medium text-crema transition hover:bg-rosa-hondo"
+        data-reveal="fadeIn"
+      >
+        Ver catálogo completo
+        <Icon name="ph:arrow-right" class="h-4 w-4" aria-hidden="true" />
+      </a>
+    </div>
+
+    <ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        categorias.map((c, i) => {
+          const cuantos = productosDe(c.id).length;
+          return (
+            <li
+              class="group relative overflow-hidden rounded-petalo bg-white shadow-suave ring-1 ring-tinta/5 transition duration-500 ease-[var(--ease-cinta)] hover:-translate-y-1.5 hover:shadow-alto"
+              data-reveal="fadeInUp"
+              style={`--retraso:${(i % 3) * 90}ms`}
+            >
+              <div class="aspect-4/3 overflow-hidden">
+                <img
+                  src={c.foto}
+                  alt={c.alt}
+                  loading="lazy"
+                  decoding="async"
+                  width="800"
+                  height="600"
+                  class="h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-cinta)] group-hover:scale-[1.06]"
+                />
+              </div>
+
+              <div class="p-6">
+                <div class="flex items-baseline justify-between gap-4">
+                  <h3 class="font-display text-2xl">
+                    <a href={`/catalogo/${c.slug}`} class="after:absolute after:inset-0">
+                      {c.nombre}
+                    </a>
+                  </h3>
+                  <span class="shrink-0 font-mono text-[0.6rem] tracking-[0.16em] text-tinta-suave/70 uppercase">
+                    {cuantos} {cuantos === 1 ? 'ref.' : 'refs.'}
+                  </span>
+                </div>
+                <p class="mt-2.5 text-[0.94rem] text-tinta-suave">{c.lead}</p>
+
+                <span class="mt-5 inline-flex items-center gap-2 font-medium text-tinta transition group-hover:text-rosa-hondo">
+                  Ver {c.nombre.toLowerCase()}
+                  <Icon
+                    name="ph:arrow-right"
+                    class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </span>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
