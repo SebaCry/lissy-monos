@@ -6,12 +6,21 @@ import Arte from './Arte.astro';
 const cta = whatsapp(`Hola ${marca.nombre} 🎀 Vengo de la página web y quiero hacer un pedido.`);
 ---
 
-<header
-  id="encabezado"
-  class="fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-500"
-  data-encabezado
->
-  <div class="mx-auto flex max-w-7xl items-center gap-6 px-5 py-4 lg:px-10">
+<header id="encabezado" class="fixed inset-x-0 top-0 z-50">
+  {/*
+    El desenfoque va en esta capa y NO en el <header>.
+    Un elemento con `backdrop-filter` pasa a ser el bloque contenedor de sus
+    descendientes `position: fixed`, así que el menú móvil (fixed inset-0) se
+    recortaba a la altura del header en cuanto aparecía el blur al hacer scroll.
+  */}
+  <div
+    class="pointer-events-none absolute inset-0 transition-[background-color,box-shadow,backdrop-filter] duration-500"
+    data-encabezado-fondo
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative mx-auto flex max-w-7xl items-center gap-6 px-5 py-4 lg:px-10">
     <a href="/" class="group flex shrink-0 items-center gap-2.5" aria-label={`${marca.nombre}, ir al inicio`}>
       <Arte
         tipo="mono"
@@ -174,7 +183,7 @@ const cta = whatsapp(`Hola ${marca.nombre} 🎀 Vengo de la página web y quiero
 </header>
 
 <script>
-  const encabezado = document.querySelector<HTMLElement>('[data-encabezado]');
+  const fondo = document.querySelector<HTMLElement>('[data-encabezado-fondo]');
   const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
   const abrir = document.querySelector<HTMLButtonElement>('[data-menu-abrir]');
   const cerrar = document.querySelector<HTMLButtonElement>('[data-menu-cerrar]');
@@ -182,10 +191,9 @@ const cta = whatsapp(`Hola ${marca.nombre} 🎀 Vengo de la página web y quiero
   const clasesFijas = ['bg-crema/85', 'backdrop-blur-md', 'shadow-[0_1px_0_rgba(242,120,159,0.22)]'];
 
   const alHacerScroll = () => {
-    if (!encabezado) return;
-    encabezado.classList.toggle(clasesFijas[0], window.scrollY > 24);
-    encabezado.classList.toggle(clasesFijas[1], window.scrollY > 24);
-    encabezado.classList.toggle(clasesFijas[2], window.scrollY > 24);
+    if (!fondo) return;
+    const pegado = window.scrollY > 24;
+    clasesFijas.forEach((clase) => fondo.classList.toggle(clase, pegado));
   };
 
   alHacerScroll();
